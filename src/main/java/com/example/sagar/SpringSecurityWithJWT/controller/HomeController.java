@@ -2,7 +2,7 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
 
 
 import com.example.sagar.SpringSecurityWithJWT.model.JwtResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.UserInfo;
+import com.example.sagar.SpringSecurityWithJWT.model.User;
 import com.example.sagar.SpringSecurityWithJWT.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,17 +34,17 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserInfo userInfo) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody User user) throws Exception {
    try {
        authenticationManager.authenticate(
-               new UsernamePasswordAuthenticationToken(userInfo.getUserName(), userInfo.getPassword())
+               new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword())
      );
    }
    catch (BadCredentialsException e){
        throw new Exception("Incorrect username or password",e);
    }
    final UserDetails userDetails= userDetailsService
-           .loadUserByUsername(userInfo.getUserName());
+           .loadUserByUsername(user.getUserName());
 
       final String jwt=jwtUtil.generateToken(userDetails);
      return ResponseEntity.ok(new JwtResponse(jwt));

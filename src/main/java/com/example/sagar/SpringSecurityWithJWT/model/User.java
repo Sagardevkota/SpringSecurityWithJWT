@@ -1,11 +1,13 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
+import org.springframework.context.annotation.Primary;
+
 import javax.persistence.*;
 
 @Entity(name = "user_info")
 @Table(name = "user_info")
-public class UserInfo {
-    @Id
+public class User {
+   @Id
     @Column(name = "id",nullable = false,unique = true)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
@@ -15,12 +17,12 @@ public class UserInfo {
     @Column(name = "password")
     private String password;
 
-    public UserInfo(String userName, String password) {
+    public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
     }
 
-    public UserInfo() {
+    public User() {
     }
 
     public int getId() {
@@ -45,5 +47,14 @@ public class UserInfo {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
