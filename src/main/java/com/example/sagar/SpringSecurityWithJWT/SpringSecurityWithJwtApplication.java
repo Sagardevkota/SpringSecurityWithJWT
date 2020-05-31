@@ -1,5 +1,6 @@
 package com.example.sagar.SpringSecurityWithJWT;
 
+import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
 import org.springframework.boot.SpringApplication;
 
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackageClasses = UserRepository.class)
+@EnableJpaRepositories(basePackages = "com.example.sagar.SpringSecurityWithJWT.repository")
 public class SpringSecurityWithJwtApplication {
 
     public static void main(String[] args) {
