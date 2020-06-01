@@ -25,7 +25,7 @@ public class MyUserDetailService implements UserDetailsService {
 
 
        com.example.sagar.SpringSecurityWithJWT.model.User user=repository.findByUserName(userName);
-       System.out.println(userName);
+
         if (user==null)
             throw new UsernameNotFoundException("no username in database");
 

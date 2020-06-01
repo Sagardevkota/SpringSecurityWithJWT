@@ -16,14 +16,14 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping(value = "/getProducts" ,method = RequestMethod.GET)
-    public List<Products> getAllProducts()
+    @RequestMapping(value = "/getProducts/{pageNumber}" ,method = RequestMethod.GET)
+    public List<Products> getAllProducts(@PathVariable Integer pageNumber)
     {
-        return productService.getAllProducts();
+        return productService.getAllProducts(pageNumber);
 
     }
 
-    @RequestMapping(value = "/getProducts/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/getProducts/id/{id}",method = RequestMethod.GET)
     public List<Products> getOneProducts(@PathVariable Integer id)
     {
 

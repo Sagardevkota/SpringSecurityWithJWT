@@ -4,6 +4,7 @@ import com.example.sagar.SpringSecurityWithJWT.model.Products;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 
@@ -15,9 +16,15 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-  public List<Products> getAllProducts(){
+  public List<Products> getAllProducts(int page_number){
 
-       return productRepository.findAll();
+      int item_count=6;
+      int to=(page_number-1)*item_count;
+     int totalItems=Math.toIntExact(productRepository.count());
+
+     if (to>totalItems) return null;
+     else
+       return productRepository.getPaginatedProducts(item_count,to);
     }
 
 
@@ -44,5 +51,7 @@ public class ProductService {
 
         return productRepository.searchForProducts(query);
     }
+
+
 
 }
