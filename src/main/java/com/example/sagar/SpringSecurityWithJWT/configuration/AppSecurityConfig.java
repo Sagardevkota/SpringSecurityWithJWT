@@ -65,14 +65,16 @@ private JwtRequestFilter jwtRequestFilter;
        http.csrf()
                .disable()
                .authorizeRequests()
-               .antMatchers("/login")
+               .antMatchers("/login","/register")
                .permitAll()
                .anyRequest()
                .authenticated()
        .and()
+
        .sessionManagement()
        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
        ;
        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
     }
 }

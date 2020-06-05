@@ -30,20 +30,20 @@ public class ProductController {
         return productService.getOneProduct(id);
     }
 
-    @RequestMapping(value = "/getProducts/{query}/{queryValue}",method = RequestMethod.GET)
-    public List<Products> getOneProducts(@PathVariable String query,@PathVariable String queryValue)
+    @RequestMapping(value = "/getProducts/{query}/{queryValue}/{sorting}",method = RequestMethod.GET)
+    public List<Products> getOneProducts(@PathVariable String query,@PathVariable String queryValue,@PathVariable String sorting)
     {
         List<Products> products=new ArrayList<>();
         switch (query)
         {
             case "category":
-                products= productService.getProductsByCategory(queryValue);
+                products= productService.getProductsByCategory(queryValue,sorting);
                 break;
             case "brand":
-                products=productService.getProductsByBrands(queryValue);
+                products=productService.getProductsByBrands(queryValue,sorting);
                 break;
             case "type":
-                products=productService.getProductsByType(queryValue);
+                products=productService.getProductsByType(queryValue,sorting);
                 break;
         }
         return products;

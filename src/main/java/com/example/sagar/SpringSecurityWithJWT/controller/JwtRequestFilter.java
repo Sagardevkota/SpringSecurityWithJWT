@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import sun.plugin.liveconnect.SecurityContextHelper;
+
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,6 +25,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
    @Autowired
    private JwtUtil jwtUtil;
 
+   public static String response;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -37,12 +39,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
         if (userName!=null&& SecurityContextHolder.getContext().getAuthentication()==null){
             UserDetails userDetails=this.myUserDetailService.loadUserByUsername(userName);
-            if (jwtUtil.validateToken(jwt,userDetails)){
+
+            if (jwtUtil.validateToken(jwt,userDetails).equalsIgnoreCase("ok")){
+                response="ok";
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
+            else
+                throw new ServletException();
         }
         filterChain.doFilter(httpServletRequest,httpServletResponse);
     }

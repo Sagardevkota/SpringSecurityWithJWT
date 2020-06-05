@@ -13,24 +13,37 @@ public class CartService {
     @Autowired
     private CartRepository cartRepository;
 
-    public List<Products> getCartList(Integer userId){
+    public List<Products> getCartList(Integer userId)
+    {
         return cartRepository.getCartList(userId);
     }
 
-    public void addToCartList(Carts carts)
+    public String addToCartList(Carts carts)
     {
+        if (checkIfCartItemExists(carts).size()>0){
+            return "Item is already in cart";
+        }
+        else {
             cartRepository.save(carts);
+            return "Added to cart";
+        }
+
+
+    }
+
+    public List<Carts> checkIfCartItemExists(Carts carts){
+       return cartRepository.findAllByProduct_idAndUser_id(carts.getProduct_id(),carts.getUser_id());
     }
 
 
     public void removeFromCartList(Carts carts)
     {
-        cartRepository.delete(carts);
+        cartRepository.deleteFromCart(carts.getProduct_id(),carts.getUser_id());
     }
 
 
-    public int getBadgeCount(Integer userId) {
-
+    public int getBadgeCount(Integer userId)
+    {
         return cartRepository.getCartList(userId).size();
     }
 }
