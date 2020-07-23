@@ -21,18 +21,57 @@ public class User {
     @Column(name = "delivery_address")
     private String deliveryAddress;
 
-    @Column(name = "verified")
-    private Boolean verified;
 
     @Column(name = "phone")
     private String phone;
 
-    public User(String userName, String password, String deliveryAddress, String phone,Boolean verified) {
+    @Column(name = "age")
+    private String age;
+
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
+    @Column(name = "role")
+    private String role;
+
+    //for registration
+    public User(String userName, String password, String deliveryAddress, String phone, String role,String age,String gender,Double latitude,Double longitude) {
         this.userName = userName;
         this.password = password;
         this.deliveryAddress = deliveryAddress;
         this.phone = phone;
-        this.verified=verified;
+        this.role=role;
+        this.age=age;
+        this.gender=gender;
+        this.latitude=latitude;
+        this.longitude=longitude;
+    }
+
+
+    //for user details
+    public User(Integer id, String userName, String deliveryAddress, String phone,String age
+                ,String gender,String role) {
+        this.userName = userName;
+        this.id = id;
+        this.deliveryAddress = deliveryAddress;
+        this.gender=gender;
+        this.age=age;
+        this.phone = phone;
+        this.role=role;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getDeliveryAddress() {
@@ -43,20 +82,21 @@ public class User {
         this.deliveryAddress = deliveryAddress;
     }
 
-    public Boolean getVerified() {
-        return verified;
+
+    public String getAge() {
+        return age;
     }
 
-    public void setVerified(Boolean verified) {
-        this.verified = verified;
+    public void setAge(String age) {
+        this.age = age;
     }
 
-    public Boolean getVerifed() {
-        return verified;
+    public String getGender() {
+        return gender;
     }
 
-    public void setVerifed(Boolean verifed) {
-        this.verified = verified;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getPhone() {
@@ -65,6 +105,22 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public User() {

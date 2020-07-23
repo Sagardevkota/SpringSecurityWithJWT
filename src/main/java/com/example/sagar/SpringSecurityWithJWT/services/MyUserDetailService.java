@@ -23,13 +23,10 @@ public class MyUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
-
-       com.example.sagar.SpringSecurityWithJWT.model.User user=repository.findByUserName(userName);
+        com.example.sagar.SpringSecurityWithJWT.model.User user=repository.findByUserName(userName);
 
         if (user==null)
             throw new UsernameNotFoundException("no username in database");
-
-
 
         return new UserPrincipal(user);
     }

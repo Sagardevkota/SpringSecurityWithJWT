@@ -1,14 +1,11 @@
 package com.example.sagar.SpringSecurityWithJWT.controller;
 
 
-import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.JwtResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.User;
+import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.UserService;
 import com.example.sagar.SpringSecurityWithJWT.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 
 
 @RestController
@@ -58,11 +56,12 @@ public class HomeController
            .loadUserByUsername(user.getUserName());
 
       final String jwt=jwtUtil.generateToken(userDetails);
-     return new JwtResponse(jwt,"200 OK","login successfull");
+    String role= getUserRole(user.getUserName());
+     return new JwtResponse(jwt,"200 OK","login successfull",role);
     }
 
 
-    @RequestMapping(value = "/isVerified/{userName}",method = RequestMethod.GET)
+    @RequestMapping(value = "/verified/{userName}",method = RequestMethod.GET)
     public Boolean isVerified(@PathVariable String userName)
     {
         return userService.isVerified(userName);
@@ -86,14 +85,81 @@ public class HomeController
 
     }
 
-    @RequestMapping(value = "/getUserId/{userName}",method = RequestMethod.GET)
+
+    public String getUserRole( String userName)
+    {
+        return userService.getUserRole(userName);
+    }
+
+    @RequestMapping(value = "/user/id/{userName}",method = RequestMethod.GET)
     public JsonResponse getUserId(@PathVariable String userName)
     {
         return new JsonResponse("200 OK",String.valueOf(userService.getUserId(userName)));
     }
 
 
+    @RequestMapping(value = "/user/{userName}",method = RequestMethod.GET)
+    public User getUserDetails(@PathVariable String userName)
+    {
+        User user=userService.findUserDetails(userName);
+        User user1=new User(user.getId(),user.getUserName(),user.getDeliveryAddress(),user.getPhone(),user.getAge(),user.getGender(),user.getRole());
+        return user1;
 
+            }
+
+    @RequestMapping(value = "/user/{userId}/userName/{newUserName}",method = RequestMethod.PUT)
+    public JsonResponse updateEmail(@PathVariable Integer userId,@PathVariable String newUserName)
+    {
+      String message=  userService.updateEmail(userId,newUserName);
+      if (message.equalsIgnoreCase("User already exists"))
+
+        return new JsonResponse("409 Conflict",message);
+      else{
+          return new JsonResponse("200 Ok",message);
+      }
+
+    }
+
+    @RequestMapping(value = "/user/{userId}/phone/{newPhone}",method = RequestMethod.PUT)
+    public JsonResponse updatePhone(@PathVariable Integer userId,@PathVariable String newPhone)
+    {
+
+        String message=  userService.updatePhone(userId,newPhone);
+        if (message.equalsIgnoreCase("Phone is taken"))
+
+            return new JsonResponse("409 Conflict",message);
+        else{
+            return new JsonResponse("200 Ok",message);
+        }
+
+    }
+    @RequestMapping(value = "/user/{userId}/delivery/{newDelivery}",method = RequestMethod.PUT)
+    public JsonResponse updateDelivery(@PathVariable Integer userId,@PathVariable String newDelivery)
+    {
+        String message=  userService.updateDelivery(userId,newDelivery);
+        return new JsonResponse("200 OK",message);
+
+
+    }
+
+
+    @RequestMapping(value = "/seller/{sellerId}/name")
+    public JsonResponse getSellerName(@PathVariable Integer sellerId){
+        String userName=  userService.getSellerName(sellerId);
+      return new JsonResponse("200 OK",userName);
+    }
+
+    @RequestMapping(value = "/orders/nearby/{userId}",method = RequestMethod.GET)
+    public List<Products> getNearByPeopleOrders(@PathVariable Integer userId){
+        return userService.getNearbyPeopleOrders(userId);
+    }
+
+
+    @RequestMapping(value = "/feedback",method = RequestMethod.POST)
+    public JsonResponse getNearByPeopleOrders(@RequestBody Feedback feedback){
+         userService.saveFeedback(feedback);
+         return new JsonResponse("200 Ok","Added feedback");
+    }
 
 
 }

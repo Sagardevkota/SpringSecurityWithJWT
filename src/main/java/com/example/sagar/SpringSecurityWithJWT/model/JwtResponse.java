@@ -4,16 +4,26 @@ public class JwtResponse {
     private  String jwt;
     private String status;
     private String message;
+    private String role;
 
-    public JwtResponse(String jwt, String status, String message) {
+    public JwtResponse(String jwt, String status, String message,String role) {
         this.jwt = jwt;
         this.status = status;
         this.message = message;
+        this.role=role;
     }
 
     public JwtResponse(String status, String message) {
         this.status = status;
         this.message = message;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getStatus() {

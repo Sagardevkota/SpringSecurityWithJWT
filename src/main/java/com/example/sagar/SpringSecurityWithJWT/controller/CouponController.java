@@ -15,12 +15,11 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
-    @RequestMapping(value = "/checkCoupon" ,method = RequestMethod.POST)
-    public JsonResponse addToCartList(@RequestBody Coupons coupons )
+    @RequestMapping(value = "/coupon" ,method = RequestMethod.POST)
+    public JsonResponse checkCoupon(@RequestBody Coupons coupons )
     {
         List<Coupons> coupons1=couponService.checkCoupon(coupons);
-
-       if (coupons1.size()>0)
+        if (coupons1.size()>0)
            return new JsonResponse("200 OK",String.valueOf(coupons1.get(0).getDiscount()));
        else return new JsonResponse("409 Conflict","Invalid coupon code");
 

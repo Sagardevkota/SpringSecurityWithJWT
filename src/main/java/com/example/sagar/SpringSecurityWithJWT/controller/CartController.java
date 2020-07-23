@@ -1,5 +1,6 @@
 package com.example.sagar.SpringSecurityWithJWT.controller;
 
+import com.example.sagar.SpringSecurityWithJWT.model.CartResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Carts;
 import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Products;
@@ -16,15 +17,15 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @RequestMapping(value = "/getCartList/{userId}" ,method = RequestMethod.GET)
-    public List<Products> getAllProducts(@PathVariable Integer userId)
+    @RequestMapping(value = "/cart/{userId}" ,method = RequestMethod.GET)
+    public List<CartResponse> getAllProducts(@PathVariable Integer userId)
     {
 
         return cartService.getCartList(userId);
 
     }
 
-    @RequestMapping(value = "/addToCartList" ,method = RequestMethod.POST)
+    @RequestMapping(value = "/cart" ,method = RequestMethod.POST)
     public JsonResponse addToCartList(@RequestBody Carts carts)
     {
       if (cartService.addToCartList(carts).equalsIgnoreCase("Item is already in cart"))
@@ -33,7 +34,7 @@ public class CartController {
           return new JsonResponse("200 OK","Added to cart");
     }
 
-    @RequestMapping(value = "/removeFromCart" ,method = RequestMethod.DELETE)
+    @RequestMapping(value = "/cart" ,method = RequestMethod.DELETE)
     public JsonResponse removeFromCartList(@RequestBody Carts carts)
     {
         cartService.removeFromCartList(carts);
@@ -41,7 +42,7 @@ public class CartController {
 
     }
 
-    @RequestMapping(value = "/getBadgeCount/{userId}" ,method = RequestMethod.GET)
+    @RequestMapping(value = "/cart/count/{userId}" ,method = RequestMethod.GET)
     public JsonResponse getBadgeCount(@PathVariable Integer userId)
     {
              int count=cartService.getBadgeCount(userId);

@@ -14,11 +14,20 @@ public class UserPrincipal implements UserDetails {
     private String userName;
     private String password;
 
+
+
+
+
     public UserPrincipal(User user) {
         this.userName=user.getUserName();
         this.password=user.getPassword();
 
+
     }
+
+
+
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

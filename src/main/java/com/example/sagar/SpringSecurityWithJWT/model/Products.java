@@ -12,12 +12,11 @@ public class Products {
     private int productId;
     @Column(name = "product_name")
     private String productName;
-    @Column(name = "desc")
+    @Column(name = "description")
     private String desc;
-    @Column(name = "marked_price")
-    private String marked_price;
-    @Column(name = "fixed_price")
-    private String fixed_price;
+
+    @Column(name = "price")
+    private String price;
     @Column(name = "category")
     private String category;
     @Column(name = "brand")
@@ -30,19 +29,61 @@ public class Products {
     @Column(name = "picture_path")
     private String picture_path;
 
+    @Column(name = "discount")
+    private Integer discount;
+
+    @Column(name = "stock")
+    private Integer stock;
+
+    @Column(name = "seller_id")
+    private Integer seller_id;
+
     public Products() {
     }
 
-    public Products(String productName, String desc, String marked_price, String fixed_price, String category, String brand, String sku, String type,String picture_path) {
+    public Products(int productId, String productName, String desc, String price, String category, String brand, String sku, String type, String picture_path, Integer discount, Integer stock,Integer seller_id) {
+        this.productId = productId;
         this.productName = productName;
         this.desc = desc;
-        this.marked_price = marked_price;
-        this.fixed_price = fixed_price;
+       this.price=price;
         this.category = category;
         this.brand = brand;
         this.sku = sku;
         this.type = type;
-        this.picture_path=picture_path;
+        this.picture_path = picture_path;
+        this.discount = discount;
+        this.stock = stock;
+        this.seller_id=seller_id;
+    }
+
+    public Products(Products p){
+        this.productId = p.getProductId();
+        this.productName = p.getProductName();
+        this.desc = p.getDesc();
+        this.price=p.getPrice();
+        this.category = p.getCategory();
+        this.brand = p.getBrand();
+        this.sku = p.getSku();
+        this.type = p.getType();
+        this.picture_path = p.getPicture_path();
+        this.discount = p.getDiscount();
+        this.stock = p.getStock();
+        this.seller_id=p.getSeller_id();
+
+    }
+
+    public Products(String productName, String picture_path, Integer discount) {
+        this.productName = productName;
+        this.picture_path = picture_path;
+        this.discount = discount;
+    }
+
+    public Integer getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Integer discount) {
+        this.discount = discount;
     }
 
     public String getPicture_path() {
@@ -77,20 +118,12 @@ public class Products {
         this.desc = desc;
     }
 
-    public String getMarked_price() {
-        return marked_price;
+    public String getPrice() {
+        return price;
     }
 
-    public void setMarked_price(String marked_price) {
-        this.marked_price = marked_price;
-    }
-
-    public String getFixed_price() {
-        return fixed_price;
-    }
-
-    public void setFixed_price(String fixed_price) {
-        this.fixed_price = fixed_price;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
     public String getCategory() {
@@ -125,18 +158,33 @@ public class Products {
         this.type = type;
     }
 
+    public Integer getSeller_id() {
+        return seller_id;
+    }
+
+    public void setSeller_id(Integer seller_id) {
+        this.seller_id = seller_id;
+    }
+
     @Override
     public String toString() {
         return "Products{" +
                 "productId=" + productId +
                 ", productName='" + productName + '\'' +
                 ", desc='" + desc + '\'' +
-                ", marked_price='" + marked_price + '\'' +
-                ", fixed_price='" + fixed_price + '\'' +
+
                 ", category='" + category + '\'' +
                 ", brand='" + brand + '\'' +
                 ", sku='" + sku + '\'' +
                 ", type='" + type + '\'' +
                 '}';
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 }
