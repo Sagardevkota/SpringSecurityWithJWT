@@ -156,11 +156,6 @@ public class ProductController {
                 }
             }
 
-
-
-
-
-
             return new JsonResponse("200 OK","Size added");
         }
 

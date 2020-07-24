@@ -1,7 +1,7 @@
 package com.example.sagar.SpringSecurityWithJWT.repository;
 
 import com.example.sagar.SpringSecurityWithJWT.model.Order;
-import com.example.sagar.SpringSecurityWithJWT.model.Products;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,17 +17,13 @@ public interface OrderRepository extends JpaRepository<Order,Integer> {
 //    List<OrderResponse> getOrdersResponse(Integer userId);
 
      // for customers
-    @Query(value="SELECT * FROM orders where user_id=?1 AND status=?2",nativeQuery=true)
+    @Query(value="SELECT * FROM orders where user_id=?1 AND status=?2 ORDER BY id DESC",nativeQuery=true)
     List<Order> getOrders(Integer userId,String status);
 
 
 
-
-
-
-
       //for sellers
-    @Query(value="SELECT o.* FROM orders o INNER JOIN products p on p.product_id=o.product_id WHERE p.seller_id=?1 AND status=?2",nativeQuery=true)
+    @Query(value="SELECT o.* FROM orders o INNER JOIN products p on p.product_id=o.product_id WHERE p.seller_id=?1 AND status=?2 ORDER BY id DESC",nativeQuery=true)
     List<Order> getOrdersForSeller(Integer seller_id,String status);
 
 
