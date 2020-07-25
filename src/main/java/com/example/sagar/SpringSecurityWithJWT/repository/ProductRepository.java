@@ -99,4 +99,7 @@ public interface ProductRepository extends JpaRepository<Products,Integer>
 
  @Query(value = "SELECT * FROM `products` WHERE type=?1 AND category=?2 ORDER BY product_name",nativeQuery = true)
  List<Products> findByTypeAndCategoryOrderByProductName(String type, String category);
+
+ @Query(value = "select product_name from products where product_id=?1",nativeQuery = true)
+    String getProductName(Integer productId);
 }

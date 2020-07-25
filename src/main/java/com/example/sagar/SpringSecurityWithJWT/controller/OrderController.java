@@ -2,10 +2,13 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
 
 import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Order;
-import com.example.sagar.SpringSecurityWithJWT.model.OrderService;
+import com.example.sagar.SpringSecurityWithJWT.services.OrderService;
+import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -71,6 +74,8 @@ public class OrderController {
         orderService.changeOrderedDate(orderId,orderedDate);
         return new JsonResponse("200 Ok","Changed ordered date to "+orderedDate);
     }
+
+
 
 
 

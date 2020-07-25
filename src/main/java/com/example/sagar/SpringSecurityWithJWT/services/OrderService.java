@@ -1,15 +1,29 @@
-package com.example.sagar.SpringSecurityWithJWT.model;
+package com.example.sagar.SpringSecurityWithJWT.services;
 
 import com.example.sagar.SpringSecurityWithJWT.controller.OrderResponse;
+import com.example.sagar.SpringSecurityWithJWT.model.Order;
+import com.example.sagar.SpringSecurityWithJWT.model.Products;
 import com.example.sagar.SpringSecurityWithJWT.repository.OrderRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
-import com.example.sagar.SpringSecurityWithJWT.services.UserService;
-import org.aspectj.weaver.ast.Or;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderService {
@@ -21,6 +35,15 @@ public class OrderService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private JavaMailSender sender;
+
+    @Autowired
+    private Configuration config;
 
     public List<OrderResponse> getOrdersResponse(Integer userId,String status){
         List<Order> orders=getOrders(userId,status);
@@ -64,8 +87,10 @@ public class OrderService {
 
 
 
-    public void addOrders(Order order) {
+    public void addOrders(Order order) throws MessagingException, IOException, TemplateException {
+        sendEmail(order);
         orderRepository.save(order);
+
     }
 
     public List<OrderResponse> getOrdersForSellers(Integer seller_id,String status){
@@ -119,4 +144,42 @@ public class OrderService {
     public Integer getStock(Integer productId) {
         return productRepository.getStock(productId);
     }
+
+
+
+    public void sendEmail(Order order) throws MessagingException, IOException, TemplateException {
+
+        String userName=userService.getUserName(order.getUserId());
+        String productName=productService.getProductName(order.getProductId());
+
+        MimeMessage message = sender.createMimeMessage();
+        Map<String, Object> model=new HashMap<>();
+        model.put("userName",userName);
+        model.put("productName",productName);
+        model.put("qty",order.getQty());
+        model.put("color",order.getProductColor());
+        model.put("size",order.getProductSize());
+        model.put("address",order.getDeliveryAddress());
+        model.put("price",order.getPrice());
+
+
+
+            // set mediaType
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name());
+            // add attachment
+//            helper.addAttachment("logo.png", new ClassPathResource("robot.png"));
+
+            Template t = config.getTemplate("email-template.ftl");
+            String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
+
+            helper.setTo(userName);
+            helper.setText(html, true);
+            helper.setSubject("Order Confirmation");
+            helper.setFrom("noreply@SMart.com");
+            sender.send(message);
+
+
+    }
+
 }

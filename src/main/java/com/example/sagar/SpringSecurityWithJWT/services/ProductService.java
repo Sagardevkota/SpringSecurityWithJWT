@@ -58,6 +58,11 @@ public class ProductService {
         return productRepository.findAllByProductId(id);
     }
 
+    public String getProductName(Integer productId)
+    {
+        return  productRepository.getProductName(productId);
+    }
+
     public List<ProductResponse> getProductsByCategory(String category, String sorting) {
 
         List<Products> products=new ArrayList<>();

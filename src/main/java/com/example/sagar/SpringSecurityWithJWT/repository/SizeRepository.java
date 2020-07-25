@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface SizeRepository extends JpaRepository<SizeAttribute,Integer> {
 
-    @Query(value="SELECT  * from size_attribute where product_id=?1 GROUP BY size",nativeQuery=true)
+    @Query(value="SELECT  * from size_attribute where product_id=?1 ",nativeQuery=true)
     List<SizeAttribute> findAllByProduct_id(Integer product_id);
 
     @Query(value="SELECT count(size) from size_attribute where product_id=?1 and size =?2",nativeQuery=true)

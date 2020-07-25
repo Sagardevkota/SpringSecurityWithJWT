@@ -13,7 +13,7 @@ import java.util.List;
 public interface ColorRepository extends JpaRepository<ColorAttribute,Integer> {
 
 
-    @Query(value="SELECT * from color_attribute where product_id=?1 GROUP BY color ",nativeQuery=true)
+    @Query(value="SELECT * from color_attribute where product_id=?1  ",nativeQuery=true)
     List<ColorAttribute> findAllByProduct_id(Integer product_id);
 
     @Query(value="SELECT count(color) from color_attribute where product_id=?1 and color=?2",nativeQuery=true)
