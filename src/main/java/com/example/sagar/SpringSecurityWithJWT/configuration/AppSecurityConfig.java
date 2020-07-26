@@ -99,8 +99,9 @@ private JwtRequestFilter jwtRequestFilter;
        http.csrf()
                .disable()
                .authorizeRequests()
-               .antMatchers("/login","/register")
+               .antMatchers("/login","/register","/actuator/**")
                .permitAll()
+
                .anyRequest()
                .authenticated()
        .and()
