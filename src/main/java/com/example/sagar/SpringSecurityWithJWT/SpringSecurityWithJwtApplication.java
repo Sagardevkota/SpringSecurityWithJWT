@@ -10,17 +10,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.core.context.SecurityContext;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.ApiKeyVehicle;
+import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @EnableSwagger2
 @SpringBootApplication
@@ -43,6 +46,9 @@ public class SpringSecurityWithJwtApplication {
                 .build()
                 .apiInfo(apiInfo())
                 .securitySchemes(Arrays.asList(apiKey()))
+                .securityContexts(Arrays.asList(securityContext()))
+                .useDefaultResponseMessages(false)
+
 
                 ;
     }
@@ -62,8 +68,26 @@ public class SpringSecurityWithJwtApplication {
         );
     }
 
+
     private ApiKey apiKey() {
-        return new ApiKey("Bearer ", "Authorization", "header");
+        return new ApiKey("JWT", "Authorization", "header");
     }
+
+    private springfox.documentation.spi.service.contexts.SecurityContext securityContext() {
+        return  springfox.documentation.spi.service.contexts.SecurityContext.builder()
+                .securityReferences(defaultAuth())
+                .forPaths(PathSelectors.regex("/.*"))
+                .build();
+    }
+
+    List<SecurityReference> defaultAuth() {
+        AuthorizationScope authorizationScope
+                = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+        authorizationScopes[0] = authorizationScope;
+        return Lists.newArrayList(
+                new SecurityReference("JWT", authorizationScopes));
+    }
+
 
 }

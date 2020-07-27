@@ -61,11 +61,9 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/product/{pageNumber}" ,method = RequestMethod.GET)
-    @ApiOperation(value = "Enter jwt token to call API", authorizations = { @Authorization(value="Bearer ") })
     public List<ProductResponse> getAllProducts(@PathVariable Integer pageNumber)
     {
         return productService.getAllProducts(pageNumber);
-
     }
 
     @RequestMapping(value = "/product/id/{id}",method = RequestMethod.GET)
