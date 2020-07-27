@@ -99,7 +99,15 @@ private JwtRequestFilter jwtRequestFilter;
        http.csrf()
                .disable()
                .authorizeRequests()
-               .antMatchers("/login","/register")
+               .antMatchers("/login",
+                       "/register",
+                       "/actuator/**",
+                       "/v2/api-docs",
+                       "/configuration/ui",
+                       "/swagger-resources/**",
+                       "/configuration/security",
+                       "/swagger-ui.html",
+                       "/webjars/**")
                .permitAll()
                .anyRequest()
                .authenticated()

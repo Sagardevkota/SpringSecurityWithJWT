@@ -17,13 +17,13 @@ public interface OrderRepository extends JpaRepository<Order,Integer> {
 //    List<OrderResponse> getOrdersResponse(Integer userId);
 
      // for customers
-    @Query(value="SELECT * FROM orders where user_id=?1 AND status=?2 ORDER BY id DESC",nativeQuery=true)
+    @Query(value="SELECT * FROM orders where user_id=?1 AND status=?2 ORDER BY order_id DESC",nativeQuery=true)
     List<Order> getOrders(Integer userId,String status);
 
 
 
       //for sellers
-    @Query(value="SELECT o.* FROM orders o INNER JOIN products p on p.product_id=o.product_id WHERE p.seller_id=?1 AND status=?2 ORDER BY id DESC",nativeQuery=true)
+    @Query(value="SELECT o.* FROM orders o INNER JOIN products p on p.product_id=o.product_id WHERE p.seller_id=?1 AND status=?2 ORDER BY order_id DESC",nativeQuery=true)
     List<Order> getOrdersForSeller(Integer seller_id,String status);
 
 
