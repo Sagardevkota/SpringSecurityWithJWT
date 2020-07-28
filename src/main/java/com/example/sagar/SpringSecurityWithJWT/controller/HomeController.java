@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 
+@RequestMapping("/api")
 @RestController
 public class HomeController
 {

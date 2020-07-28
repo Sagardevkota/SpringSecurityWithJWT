@@ -1,7 +1,6 @@
 package com.example.sagar.SpringSecurityWithJWT;
 
-import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
-import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
+
 import com.google.common.collect.Lists;
 import org.springframework.boot.SpringApplication;
 
@@ -10,17 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.security.core.context.SecurityContext;
+
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.ApiKeyVehicle;
-import springfox.documentation.swagger.web.SecurityConfiguration;
+
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,7 +58,7 @@ public class SpringSecurityWithJwtApplication {
                 "1.0",
                 "Contact sagar devkota to use",
                 new springfox.documentation.service.Contact("Sagar Devkota","sagardevkota.com","sagardevkota55@gmail.com"),
-                "API License",
+                "Apache License",
                 "http://sagar.com",
                 Collections.emptyList()
 
@@ -76,7 +73,7 @@ public class SpringSecurityWithJwtApplication {
     private springfox.documentation.spi.service.contexts.SecurityContext securityContext() {
         return  springfox.documentation.spi.service.contexts.SecurityContext.builder()
                 .securityReferences(defaultAuth())
-                .forPaths(PathSelectors.regex("/.*"))
+                .forPaths(PathSelectors.regex("/api/.*"))
                 .build();
     }
 
