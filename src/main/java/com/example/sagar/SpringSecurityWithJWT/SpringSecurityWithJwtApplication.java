@@ -54,7 +54,7 @@ public class SpringSecurityWithJwtApplication {
     {
         return new ApiInfo(
                 "SMART API",
-                "API for applications owned by S-Mart company",
+                "API for applications owned by S-Mart company. <br> While Using API first login from home contoller and get jwt token. Then Authorize it by providing value as Bearer jwt",
                 "1.0",
                 "Contact sagar devkota to use",
                 new springfox.documentation.service.Contact("Sagar Devkota","sagardevkota.com","sagardevkota55@gmail.com"),

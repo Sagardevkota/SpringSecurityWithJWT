@@ -4,8 +4,7 @@ import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.ColorAttrService;
 import com.example.sagar.SpringSecurityWithJWT.services.ProductService;
 import com.example.sagar.SpringSecurityWithJWT.services.SizeAttrService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 @RestController
 public class ProductController {
