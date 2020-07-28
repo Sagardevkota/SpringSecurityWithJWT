@@ -34,11 +34,7 @@ public class HomeController
 
     @Autowired
     private JwtUtil jwtUtil;
-    @RequestMapping(value = "/")
-    public ModelAndView home()
-    {
-        return new ModelAndView("index");
-    }
+
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public JwtResponse createAuthenticationToken(@RequestBody User user) throws Exception {
