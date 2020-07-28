@@ -88,8 +88,9 @@ public class OrderService {
 
 
     public void addOrders(Order order) throws MessagingException, IOException, TemplateException {
-        sendEmail(order);
+
         orderRepository.save(order);
+        sendEmail(order);
 
     }
 

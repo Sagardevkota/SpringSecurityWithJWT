@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Properties;
 
 @EnableWebSecurity
-
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
 @Autowired
