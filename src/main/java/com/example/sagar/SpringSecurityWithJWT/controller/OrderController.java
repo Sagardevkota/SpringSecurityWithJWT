@@ -11,7 +11,7 @@ import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.List;
 
-@RequestMapping("/api")
+
 @RestController
 public class OrderController {
 
