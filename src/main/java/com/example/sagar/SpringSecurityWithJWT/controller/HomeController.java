@@ -146,7 +146,7 @@ public class HomeController
       return new JsonResponse("200 OK",userName);
     }
 
-    @RequestMapping(value = "/orders/nearby/{userId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/order/nearby/{userId}",method = RequestMethod.GET)
     public List<Products> getNearByPeopleOrders(@PathVariable Integer userId){
         return userService.getNearbyPeopleOrders(userId);
     }
