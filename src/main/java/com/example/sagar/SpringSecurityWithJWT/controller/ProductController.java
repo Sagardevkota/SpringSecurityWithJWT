@@ -67,7 +67,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/product/id/{id}",method = RequestMethod.GET)
-    public List<ProductResponse> getOneProducts(@PathVariable Integer id)
+    public List<Products> getOneProducts(@PathVariable Integer id)
     {
 
         return productService.getOneProduct(id);

@@ -26,6 +26,9 @@ public class UserService {
    private OrderService orderService;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private ProductRepository productRepository;
 
     @Autowired
@@ -97,7 +100,9 @@ public class UserService {
     }
 
 
-    public List<Products> getNearbyPeopleOrders(Integer userId){
+    public List<ProductResponse> getNearbyPeopleOrders(Integer userId){
+
+        List<ProductResponse> productResponses=new ArrayList<>();
 
         //get latlng
      User user=   repository.findAllByUserId(userId);
@@ -132,7 +137,25 @@ public class UserService {
         for (int count=0;count<n;count++){
             products.add(new Products(productRepository.getOneProduct(productId[count])));
         }
-        return products;
+        for (Products products1:products)
+        {
+            productResponses.add(new ProductResponse(
+                    products1.getProductId(),
+                    products1.getProductName(),
+                    products1.getDesc(),
+                    products1.getPrice(),
+                    products1.getCategory(),
+                    products1.getBrand(),
+                    products1.getSku(),
+                    products1.getType(),
+                    products1.getPicture_path(),
+                    products1.getDiscount(),
+                    products1.getStock(),
+                    products1.getSeller_id(),
+                   String.valueOf(productRepository.getRating(products1.getProductId()))
+            ));
+        }
+        return productResponses;
     }
 
     public List<Integer> findNearByUser(Double latitude,Double longitude,Integer user_id){

@@ -147,7 +147,7 @@ public class HomeController
     }
 
     @RequestMapping(value = "/order/nearby/{userId}",method = RequestMethod.GET)
-    public List<Products> getNearByPeopleOrders(@PathVariable Integer userId){
+    public List<ProductResponse> getNearByPeopleOrders(@PathVariable Integer userId){
         return userService.getNearbyPeopleOrders(userId);
     }
 
