@@ -53,32 +53,9 @@ public class ProductService {
     }
 
 
-    public List<ProductResponse> getOneProduct(Integer id) {
-        List<ProductResponse> productResponses=new ArrayList<>();
-        List<Products> products=productRepository.findAllByProductId(id);
-        for (Products products1:products)
-        {
-            String rating=String.valueOf(productRepository.getRating(products1.getProductId()));
-            productResponses.add(new ProductResponse(
-                    products1.getProductId(),
-                    products1.getProductName(),
-                    products1.getDesc(),
-                    products1.getPrice(),
-                    products1.getCategory(),
-                    products1.getBrand(),
-                    products1.getSku(),
-                    products1.getType(),
-                    products1.getPicture_path(),
-                    products1.getDiscount(),
-                    products1.getStock(),
-                    products1.getSeller_id(),
-                    rating
+    public List<Products> getOneProduct(Integer id) {
 
-            ));
-        }
-
-
-        return productResponses;
+        return productRepository.findAllByProductId(id);
     }
 
     public String getProductName(Integer productId)
