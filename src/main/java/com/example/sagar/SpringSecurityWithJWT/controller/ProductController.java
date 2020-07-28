@@ -101,7 +101,7 @@ public class ProductController {
     }
 
     @RequestMapping(value = "/product/query/{query}",method = RequestMethod.GET)
-    public List<ProductResponse> getOneProducts(@PathVariable String query)
+    public List<ProductResponse> searchProduct(@PathVariable String query)
     {
         return  productService.getProductsByQuery(query);
     }

@@ -140,7 +140,7 @@ public class HomeController
     }
 
 
-    @RequestMapping(value = "/seller/{sellerId}/name")
+    @RequestMapping(value = "/seller/{sellerId}/name",method = RequestMethod.GET)
     public JsonResponse getSellerName(@PathVariable Integer sellerId){
         String userName=  userService.getSellerName(sellerId);
       return new JsonResponse("200 OK",userName);
