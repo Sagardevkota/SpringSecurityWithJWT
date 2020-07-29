@@ -74,6 +74,22 @@ public class OrderResponse {
         this.picture_path = picture_path;
     }
 
+    public OrderResponse(OrderResponse orderResponse) {
+        this.order_id = orderResponse.getOrder_id();
+        this.product_id = orderResponse.getProduct_id();
+        this.product_color = orderResponse.getProduct_color();
+        this.product_size = orderResponse.getProduct_size();
+        this.price = orderResponse.getPrice();
+        this.quantity = orderResponse.getQuantity();
+        this.ordered_date = orderResponse.getOrdered_date();
+        this.delivered_date = orderResponse.getOrdered_date();
+        this.delivery_address = orderResponse.getDelivery_address();
+        this.status = orderResponse.getStatus();
+        this.product_name = orderResponse.getProduct_name();
+        this.discount = orderResponse.getDiscount();
+        this.picture_path = orderResponse.getPicture_path();
+    }
+
     public String getPhone() {
         return phone;
     }

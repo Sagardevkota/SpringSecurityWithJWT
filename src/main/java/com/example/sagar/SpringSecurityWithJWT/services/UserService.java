@@ -5,6 +5,7 @@ import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.repository.FeedbackRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -109,21 +110,27 @@ public class UserService {
      Double latitude=user.getLatitude();
      Double longitude=user.getLongitude();
 
-        List<OrderResponse> orders=new ArrayList<>();
+        List<OrderResponse> Totalorders=new ArrayList<>();
         //get Ids of nearBy people
         List<Integer> user_Id=  findNearByUser(latitude,longitude,userId);
 
   //get orders of those ids
     for (Integer id:user_Id){
-        orders= orderService.getOrdersResponse(id,"completed");
+        List<OrderResponse> orderResponses=orderService.getOrdersResponse(id,"completed");
+        for (OrderResponse orderResponse:orderResponses)
+        {
+            Totalorders.add(new OrderResponse(orderResponse));
+        }
+
+
     }
 
     List<Products> products=new ArrayList<>();
 
     //get productIds
-        Integer [] productId=new Integer[orders.size()];
+        Integer [] productId=new Integer[Totalorders.size()];
         int i=0;
-    for (OrderResponse orderResponse:orders){
+    for (OrderResponse orderResponse:Totalorders){
         productId[i]=orderResponse.getProduct_id();
         i++;
     }
