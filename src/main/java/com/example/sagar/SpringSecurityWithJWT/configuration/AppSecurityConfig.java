@@ -98,7 +98,8 @@ private JwtRequestFilter jwtRequestFilter;
        http.csrf()
                .disable()
                .authorizeRequests()
-               .antMatchers("/login",
+               .antMatchers("/corona",
+                       "/login",
                        "/register",
                        "/actuator/**",
                        "/v2/api-docs",

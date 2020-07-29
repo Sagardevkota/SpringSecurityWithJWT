@@ -5,17 +5,14 @@ import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.UserService;
 import com.example.sagar.SpringSecurityWithJWT.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-
 
 
 @RestController
@@ -38,7 +35,7 @@ public class HomeController
 
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public JwtResponse createAuthenticationToken(@RequestBody User user) throws Exception {
+    public JwtResponse createAuthenticationToken(@RequestBody User user) {
    try
    {
        authenticationManager.authenticate(
@@ -99,8 +96,7 @@ public class HomeController
     public User getUserDetails(@PathVariable String userName)
     {
         User user=userService.findUserDetails(userName);
-        User user1=new User(user.getId(),user.getUserName(),user.getDeliveryAddress(),user.getPhone(),user.getAge(),user.getGender(),user.getRole());
-        return user1;
+        return new User(user.getId(),user.getUserName(),user.getDeliveryAddress(),user.getPhone(),user.getAge(),user.getGender(),user.getRole());
 
             }
 
@@ -153,7 +149,7 @@ public class HomeController
 
 
     @RequestMapping(value = "/feedback",method = RequestMethod.POST)
-    public JsonResponse getNearByPeopleOrders(@RequestBody Feedback feedback){
+    public JsonResponse addFeedback(@RequestBody Feedback feedback){
          userService.saveFeedback(feedback);
          return new JsonResponse("200 Ok","Added feedback");
     }
