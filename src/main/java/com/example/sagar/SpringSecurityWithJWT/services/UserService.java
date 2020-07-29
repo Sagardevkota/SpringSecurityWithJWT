@@ -1,17 +1,16 @@
 package com.example.sagar.SpringSecurityWithJWT.services;
 
 import com.example.sagar.SpringSecurityWithJWT.controller.OrderResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.*;
+import com.example.sagar.SpringSecurityWithJWT.model.Feedback;
+import com.example.sagar.SpringSecurityWithJWT.model.ProductResponse;
+import com.example.sagar.SpringSecurityWithJWT.model.Products;
+import com.example.sagar.SpringSecurityWithJWT.model.User;
 import com.example.sagar.SpringSecurityWithJWT.repository.FeedbackRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-
-import java.lang.Math;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +25,6 @@ public class UserService {
     @Autowired
    private OrderService orderService;
 
-    @Autowired
-    private ProductService productService;
 
     @Autowired
     private ProductRepository productRepository;
@@ -167,7 +164,7 @@ public class UserService {
 
     public List<Integer> findNearByUser(Double latitude,Double longitude,Integer user_id){
 
-        Integer radius = 50; // Km
+        int radius = 50; // Km
 
 
         // Every lat|lon degree° is ~ 111Km
@@ -199,7 +196,7 @@ public class UserService {
             // If current element is not equal
             // to next element then store that
             // current element
-            if (arr[i] != arr[i+1])
+            if (!arr[i].equals(arr[i + 1]))
                 temp[j++] = arr[i];
 
         // Store the last element as whether
