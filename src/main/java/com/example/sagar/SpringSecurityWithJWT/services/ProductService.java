@@ -3,14 +3,11 @@ package com.example.sagar.SpringSecurityWithJWT.services;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.repository.*;
 
-import com.mysql.cj.log.Log;
-import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import javax.swing.text.AttributeSet;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;

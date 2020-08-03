@@ -1,6 +1,6 @@
 package com.example.sagar.SpringSecurityWithJWT.repository;
 
-import ch.qos.logback.core.boolex.EvaluationException;
+
 import com.example.sagar.SpringSecurityWithJWT.model.Carts;
 import com.example.sagar.SpringSecurityWithJWT.model.Products;
 import org.springframework.data.jpa.repository.JpaRepository;

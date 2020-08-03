@@ -4,6 +4,7 @@ import com.example.sagar.SpringSecurityWithJWT.model.CartResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Carts;
 import com.example.sagar.SpringSecurityWithJWT.model.Products;
 import com.example.sagar.SpringSecurityWithJWT.repository.CartRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+
 public class CartService {
+
     @Autowired
     private CartRepository cartRepository;
 
@@ -31,7 +34,6 @@ public class CartService {
             cartResponseList.add(new CartResponse(p.getProductId(),
                     p.getProductName(),
                     p.getDesc(),
-
                     price,
                     p.getCategory(),
                     p.getBrand(),
