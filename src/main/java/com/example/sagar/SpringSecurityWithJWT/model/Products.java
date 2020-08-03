@@ -1,6 +1,7 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Entity(name = "products")
 @Table(name = "products")
 @Getter
+@NoArgsConstructor
 public class Products {
 
     @Id
@@ -46,8 +48,7 @@ public class Products {
     @Column(name = "seller_id")
     private Integer seller_id;
 
-    public Products() {
-    }
+
 
 
     public Products(Products p){

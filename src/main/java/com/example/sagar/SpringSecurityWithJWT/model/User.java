@@ -3,6 +3,7 @@ package com.example.sagar.SpringSecurityWithJWT.model;
 
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class User {
    @Id
     @Column(name = "user_id",nullable = false,unique = true)
