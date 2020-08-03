@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
+
 
 @Entity(name = "carts")
 @Table(name = "carts")
@@ -36,6 +36,7 @@ public class Carts {
     @Column(name = "price")
     private String price;
 
+    //add @Transient to have non db field
 
 
 }
