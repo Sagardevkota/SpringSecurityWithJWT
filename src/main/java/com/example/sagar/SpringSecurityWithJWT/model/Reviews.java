@@ -1,7 +1,16 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "reviews")
 @Entity(name = "reviews")
 public class Reviews {
@@ -26,63 +35,5 @@ public class Reviews {
     @Column(name = "date")
     private String date;
 
-    public Reviews() {
-    }
 
-    public Reviews(Integer id, Integer user_id, Integer product_id, String message, String rating, String date) {
-        this.id = id;
-        this.user_id = user_id;
-        this.product_id = product_id;
-        this.message = message;
-        this.rating = rating;
-        this.date = date;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
-    }
-
-    public Integer getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(Integer product_id) {
-        this.product_id = product_id;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getRating() {
-        return rating;
-    }
-
-    public void setRating(String rating) {
-        this.rating = rating;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
 }

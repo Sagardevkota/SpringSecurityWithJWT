@@ -2,13 +2,11 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
 
 import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Order;
+import com.example.sagar.SpringSecurityWithJWT.model.OrderResponse;
 import com.example.sagar.SpringSecurityWithJWT.services.OrderService;
-import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -19,7 +17,7 @@ public class OrderController {
     private OrderService orderService;
 
     @RequestMapping(value = "/order/id/{userId}/status/{status}", method = RequestMethod.GET)
-    public List<OrderResponse> getOrdersResponse(@PathVariable  Integer userId,@PathVariable String status){
+    public List<OrderResponse> getOrdersResponse(@PathVariable  Integer userId, @PathVariable String status){
 
         return orderService.getOrdersResponse(userId,status);
 

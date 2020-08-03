@@ -1,6 +1,6 @@
 package com.example.sagar.SpringSecurityWithJWT.services;
 
-import com.example.sagar.SpringSecurityWithJWT.controller.OrderResponse;
+import com.example.sagar.SpringSecurityWithJWT.model.OrderResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Feedback;
 import com.example.sagar.SpringSecurityWithJWT.model.ProductResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Products;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 @Service
 public class UserService {
@@ -112,6 +113,7 @@ public class UserService {
         List<Integer> user_Id=  findNearByUser(latitude,longitude,userId);
 
   //get orders of those ids
+      
     for (Integer id:user_Id){
         List<OrderResponse> orderResponses=orderService.getOrdersResponse(id,"completed");
         for (OrderResponse orderResponse:orderResponses)
@@ -141,24 +143,25 @@ public class UserService {
         for (int count=0;count<n;count++){
             products.add(new Products(productRepository.getOneProduct(productId[count])));
         }
-        for (Products products1:products)
-        {
-            productResponses.add(new ProductResponse(
-                    products1.getProductId(),
-                    products1.getProductName(),
-                    products1.getDesc(),
-                    products1.getPrice(),
-                    products1.getCategory(),
-                    products1.getBrand(),
-                    products1.getSku(),
-                    products1.getType(),
-                    products1.getPicture_path(),
-                    products1.getDiscount(),
-                    products1.getStock(),
-                    products1.getSeller_id(),
-                   String.valueOf(productRepository.getRating(products1.getProductId()))
-            ));
-        }
+
+
+        products.forEach(products1 ->
+                productResponses.add(new ProductResponse(
+                        products1.getProductId(),
+                        products1.getProductName(),
+                        products1.getDesc(),
+                        products1.getPrice(),
+                        products1.getCategory(),
+                        products1.getBrand(),
+                        products1.getSku(),
+                        products1.getType(),
+                        products1.getPicture_path(),
+                        products1.getDiscount(),
+                        products1.getStock(),
+                        products1.getSeller_id(),
+                        String.valueOf(productRepository.getRating(products1.getProductId()))
+                )));
+
         return productResponses;
     }
 

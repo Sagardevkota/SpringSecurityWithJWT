@@ -1,10 +1,15 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 
 @Entity(name = "orders")
-
+@Getter
+@Setter
 public class Order {
 
     @Id
@@ -61,91 +66,5 @@ public class Order {
         this.status = status;
     }
 
-    public Integer getOrderId() {
-        return orderId;
-    }
 
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public String getProductColor() {
-        return productColor;
-    }
-
-    public void setProductColor(String productColor) {
-        this.productColor = productColor;
-    }
-
-    public Float getProductSize() {
-        return productSize;
-    }
-
-    public void setProductSize(Float productSize) {
-        this.productSize = productSize;
-    }
-
-    public Integer getPrice() {
-        return price;
-    }
-
-    public void setPrice(Integer price) {
-        this.price = price;
-    }
-
-    public Integer getQty() {
-        return qty;
-    }
-
-    public void setQty(Integer qty) {
-        this.qty = qty;
-    }
-
-    public String getOrderedDate() {
-        return orderedDate;
-    }
-
-    public void setOrderedDate(String orderedDate) {
-        this.orderedDate = orderedDate;
-    }
-
-    public String getDelivered_date() {
-        return delivered_date;
-    }
-
-    public void setDelivered_date(String delivered_date) {
-        this.delivered_date = delivered_date;
-    }
-
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

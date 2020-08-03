@@ -1,6 +1,13 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 
 public class CartResponse {
 
@@ -65,108 +72,5 @@ public class CartResponse {
 
     }
 
-    public int getProductId() {
-        return productId;
-    }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-
-    public String getPrice() {
-        return price;
-    }
-
-    public void setPrice(String price) {
-        this.price = price;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getPicture_path() {
-        return picture_path;
-    }
-
-    public void setPicture_path(String picture_path) {
-        this.picture_path = picture_path;
-    }
-
-    public Integer getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(Integer discount) {
-        this.discount = discount;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public float getSize() {
-        return size;
-    }
-
-    public void setSize(float size) {
-        this.size = size;
-    }
 }

@@ -1,9 +1,16 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity(name = "feedback")
 @Table(name = "feedback")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Feedback {
 
     @Id
@@ -17,46 +24,4 @@ public class Feedback {
     @Column(name="subject")
     private String subject;
 
-
-
-    public Feedback(Integer user_id,String subject, String message) {
-        this.user_id = user_id;
-        this.subject=subject;
-        this.message = message;
-    }
-
-    public Feedback() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(Integer user_id) {
-        this.user_id = user_id;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

@@ -2,11 +2,18 @@ package com.example.sagar.SpringSecurityWithJWT.model;
 
 
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import javax.persistence.*;
 
 
 @Entity(name = "user_info")
 @Table(name = "user_info")
+@Getter
+@Setter
+@ToString
 public class User {
    @Id
     @Column(name = "user_id",nullable = false,unique = true)
@@ -66,96 +73,5 @@ public class User {
         this.role=role;
     }
 
-    public String getRole() {
-        return role;
-    }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getDeliveryAddress() {
-        return deliveryAddress;
-    }
-
-    public void setDeliveryAddress(String deliveryAddress) {
-        this.deliveryAddress = deliveryAddress;
-    }
-
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
-
-    public User() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
 }

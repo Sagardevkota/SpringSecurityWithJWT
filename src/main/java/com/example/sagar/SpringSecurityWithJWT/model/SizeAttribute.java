@@ -1,9 +1,18 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity(name = "size_attribute")
 @Table(name = "size_attribute")
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class SizeAttribute {
 
     @Id
@@ -20,30 +29,5 @@ public class SizeAttribute {
         this.size = size;
     }
 
-    public SizeAttribute() {
-    }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getProduct_id() {
-        return product_id;
-    }
-
-    public void setProduct_id(Integer product_id) {
-        this.product_id = product_id;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
 }
