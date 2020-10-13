@@ -3,6 +3,8 @@ package com.example.sagar.SpringSecurityWithJWT.services;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.repository.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -219,6 +221,8 @@ public class ProductService {
     }
 
     public JsonResponse saveImage(MultipartFile file) {
+        Logger logger = LoggerFactory.getLogger(ProductService.class);
+
 
         String folder = "/api/photos/";
         try {
@@ -226,9 +230,11 @@ public class ProductService {
             Path path = Paths.get(folder +file.getOriginalFilename());
             String location=BASE_URL+file.getOriginalFilename();
             Files.write(path, bytes);
+            logger.info("Saved image to "+location);
             return new JsonResponse("200 OK", location);
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return new JsonResponse("500 Internal server error", e.getMessage());
         }
 
