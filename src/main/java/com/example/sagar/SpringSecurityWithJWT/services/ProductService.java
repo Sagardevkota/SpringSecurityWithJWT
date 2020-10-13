@@ -235,6 +235,7 @@ public class ProductService {
 
         } catch (Exception e) {
             logger.error("Error while editing image"+e.getMessage());
+            e.printStackTrace();
             return new JsonResponse("500 Internal server error", e.getMessage());
         }
 
