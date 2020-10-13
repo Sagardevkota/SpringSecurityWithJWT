@@ -95,7 +95,7 @@ public class ProductController {
     @RequestMapping(value = "/product/type/{type}/category/{category}/{sorting}",method = RequestMethod.GET)
     public List<ProductResponse> getProductsByTypeAndCategory(@PathVariable String type,@PathVariable String category,@PathVariable String sorting)
     {
-        List<ProductResponse> products=new ArrayList<>();
+        List<ProductResponse> products;
        products=productService.getProductsByTypeAndCategory(type,category,sorting);
         return products;
     }

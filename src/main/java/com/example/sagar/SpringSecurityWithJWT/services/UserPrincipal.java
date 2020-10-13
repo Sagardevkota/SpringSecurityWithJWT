@@ -15,18 +15,12 @@ public class UserPrincipal implements UserDetails {
     private String password;
 
 
-
-
-
     public UserPrincipal(User user) {
         this.userName=user.getUserName();
         this.password=user.getPassword();
 
 
     }
-
-
-
 
 
     @Override

@@ -79,11 +79,9 @@ public class OrderService {
 
 
     public List<Order> getOrders(Integer userId,String status){
-        return   orderRepository.getOrders(userId,status);
+        return orderRepository.getOrders(userId,status);
 
     }
-
-
 
 
     public void addOrders(Order order) throws MessagingException, IOException, TemplateException {

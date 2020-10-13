@@ -2,19 +2,16 @@ package com.example.sagar.SpringSecurityWithJWT.model;
 
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 
 @Entity(name = "user_info")
 @Table(name = "user_info")
-@Getter
-@Setter
-@ToString
+@Data
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 public class User {
    @Id

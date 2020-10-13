@@ -17,6 +17,8 @@ import java.util.List;
 @Service
 public class ProductService {
 
+    private String BASE_URL = "http://52.171.61.18:8080/";
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -218,11 +220,11 @@ public class ProductService {
 
     public JsonResponse saveImage(MultipartFile file) {
 
-        String folder = "/xampp/htdocs/smartPasalAssets/photos/";
+        String folder = "/api/photos/";
         try {
             byte[] bytes =file.getBytes();
             Path path = Paths.get(folder +file.getOriginalFilename());
-            String location="http://localhost/smartPasalAssets/photos/"+file.getOriginalFilename();
+            String location=BASE_URL+file.getOriginalFilename();
             Files.write(path, bytes);
             return new JsonResponse("200 OK", location);
 

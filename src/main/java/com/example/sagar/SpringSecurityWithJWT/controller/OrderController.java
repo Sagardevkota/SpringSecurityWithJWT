@@ -28,8 +28,8 @@ public class OrderController {
 
         try {
 
-          Integer stock=orderService.getStock(order.getProductId());
-          Integer decreasedStock=stock-order.getQty();
+           Integer stock=orderService.getStock(order.getProductId());
+           Integer decreasedStock=stock-order.getQty();
            orderService.changeStock(decreasedStock,order.getProductId());
            orderService.addOrders(order);
 
@@ -48,8 +48,7 @@ public class OrderController {
     @RequestMapping(value = "/order/seller/id/{sellerId}/status/{status}", method = RequestMethod.GET)
     public List<OrderResponse> getOrdersForSeller(@PathVariable  Integer sellerId,@PathVariable String status){
 
-        List<OrderResponse> orderResponses=orderService.getOrdersForSellers(sellerId,status);
-        return orderResponses;
+        return orderService.getOrdersForSellers(sellerId,status);
 
     }
 

@@ -19,7 +19,6 @@ public class OrderResponse {
 
     private String phone;
 
-
     private String product_color;
 
     private Float product_size;
