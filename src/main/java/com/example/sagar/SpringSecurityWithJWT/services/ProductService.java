@@ -7,9 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import javax.servlet.ServletContext;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +38,9 @@ public class ProductService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    ServletContext context;
 
     public List<ProductResponse> getAllProducts(int page_number) {
         List<ProductResponse> productResponses=new ArrayList<>();
@@ -227,8 +233,9 @@ public class ProductService {
         String folder = "/api/photos/";
         try {
             byte[] bytes =file.getBytes();
-            Path path = Paths.get(folder +file.getOriginalFilename());
-            String location=BASE_URL+file.getOriginalFilename();
+            Path path = Paths
+                    .get(folder + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));;
+            String location=BASE_URL+ path;
             Files.write(path, bytes);
             logger.info("Saved image to "+location);
             return new JsonResponse("200 OK", location);
