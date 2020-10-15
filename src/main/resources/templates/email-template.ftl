@@ -40,7 +40,13 @@
 <h1 style="text-align: center; color:#f44336 ">S-Mart</h1>
 
 
-<p style="font-family: Arial, Helvetica, sans-serif; text-align: center;">Dear ${userName} , <br> Your order has been received and is in waiting state.<br>Our representatives will call you soon to confirm the order.</p>
+<p style="font-family: Arial, Helvetica, sans-serif; text-align: center;">Dear ${userName} ,
+
+
+
+    <br> Your order has been received and is in ${status} state.<br>Our representatives will contact you soon to let you know the status order.</p>
+
+
 
 <h2 style="text-align: center;">Order Details</h2>
 

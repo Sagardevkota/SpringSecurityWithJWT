@@ -87,7 +87,7 @@ public class OrderService {
     public void addOrders(Order order) throws MessagingException, IOException, TemplateException {
 
         orderRepository.save(order);
-        sendEmail(order);
+        sendEmail(order,"ORDER CONFIRMATION");
 
     }
 
@@ -127,8 +127,9 @@ public class OrderService {
         return orderRepository.getOrdersForSeller(seller_id,status).size();
     }
 
-    public void changeStatus(Integer orderId, String status) {
+    public void changeStatus(Integer orderId, String status) throws MessagingException, IOException, TemplateException {
         orderRepository.changeStatus(orderId,status);
+        sendEmail(orderRepository.getOne(orderId),status.toUpperCase());
     }
 
     public void changeOrderedDate(Integer orderId, String deliveredDate) {
@@ -145,7 +146,7 @@ public class OrderService {
 
 
 
-    public void sendEmail(Order order) throws MessagingException, IOException, TemplateException {
+    public void sendEmail(Order order,String mailType) throws MessagingException, IOException, TemplateException {
 
         String userName=userService.getUserName(order.getUserId());
         String productName=productService.getProductName(order.getProductId());
@@ -159,6 +160,7 @@ public class OrderService {
         model.put("size",order.getProductSize());
         model.put("address",order.getDeliveryAddress());
         model.put("price",order.getPrice());
+        model.put("status",order.getStatus());
 
 
 
@@ -173,7 +175,7 @@ public class OrderService {
 
             helper.setTo(userName);
             helper.setText(html, true);
-            helper.setSubject("Order Confirmation");
+            helper.setSubject(mailType);
             helper.setFrom("noreply@SMart.com");
             sender.send(message);
 

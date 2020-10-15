@@ -4,9 +4,12 @@ import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Order;
 import com.example.sagar.SpringSecurityWithJWT.model.OrderResponse;
 import com.example.sagar.SpringSecurityWithJWT.services.OrderService;
+import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -61,7 +64,7 @@ public class OrderController {
 
     //change status of orders
     @RequestMapping(value = "/order/{orderId}/status/{status}", method = RequestMethod.PUT)
-    public JsonResponse changeStatus(@PathVariable Integer orderId,@PathVariable String status){
+    public JsonResponse changeStatus(@PathVariable Integer orderId,@PathVariable String status) throws MessagingException, IOException, TemplateException {
         orderService.changeStatus(orderId,status);
         return new JsonResponse("200 Ok","Changed status to "+status);
     }

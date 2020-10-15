@@ -228,19 +228,17 @@ public class ProductService {
 
     public JsonResponse saveImage(MultipartFile file) {
         Logger logger = LoggerFactory.getLogger(ProductService.class);
-
-
-        String folder = "/api/photos/";
+        String folder = "/xampp/htdocs/smartPasalAssets/photos/";
         try {
             byte[] bytes =file.getBytes();
-            Path path = Paths
-                    .get(folder + File.separator + StringUtils.cleanPath(file.getOriginalFilename()));;
-            String location=BASE_URL+ path;
+            Path path = Paths.get(folder +file.getOriginalFilename());
+            String location="http://localhost/smartPasalAssets/photos/"+file.getOriginalFilename();
             Files.write(path, bytes);
-            logger.info("Saved image to "+location);
             return new JsonResponse("200 OK", location);
 
-        } catch (Exception e) {
+        }
+
+catch (Exception e) {
             logger.error("Error while editing image"+e.getMessage());
             e.printStackTrace();
             return new JsonResponse("500 Internal server error", e.getMessage());
