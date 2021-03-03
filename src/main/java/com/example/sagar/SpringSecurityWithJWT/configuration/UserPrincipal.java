@@ -1,33 +1,38 @@
-package com.example.sagar.SpringSecurityWithJWT.services;
+package com.example.sagar.SpringSecurityWithJWT.configuration;
 
 import com.example.sagar.SpringSecurityWithJWT.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 
 public class UserPrincipal implements UserDetails {
 
-    private String userName;
-    private String password;
-
+    private final int id;
+    private final String userName;
+    private final String password;
+    private final String role;
 
     public UserPrincipal(User user) {
-        this.userName=user.getUserName();
-        this.password=user.getPassword();
-
-
+        this.id = user.getId();
+        this.userName = user.getUserName();
+        this.password = user.getPassword();
+        this.role = user.getRole();
     }
 
+    public int getId() {
+        return id;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Arrays.asList(new SimpleGrantedAuthority("USER"));
+        return Collections.singletonList(new SimpleGrantedAuthority(this.role));
 
     }
+
 
     @Override
     public String getPassword() {

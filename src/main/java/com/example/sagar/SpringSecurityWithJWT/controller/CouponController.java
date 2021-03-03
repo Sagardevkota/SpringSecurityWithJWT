@@ -1,22 +1,26 @@
 package com.example.sagar.SpringSecurityWithJWT.controller;
 
-import com.example.sagar.SpringSecurityWithJWT.model.Carts;
 import com.example.sagar.SpringSecurityWithJWT.model.Coupons;
 import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
 import com.example.sagar.SpringSecurityWithJWT.services.CouponService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 
 @RestController
 public class CouponController {
 
-    @Autowired
-    private CouponService couponService;
+    private final CouponService couponService;
 
-    @RequestMapping(value = "/coupon" ,method = RequestMethod.POST)
+    @Autowired
+    CouponController(CouponService couponService){
+        this.couponService = couponService;
+    }
+
+    @PostMapping(value = "/coupon" )
     public JsonResponse checkCoupon(@RequestBody Coupons coupons )
     {
         List<Coupons> coupons1=couponService.checkCoupon(coupons);

@@ -1,6 +1,7 @@
 package com.example.sagar.SpringSecurityWithJWT.services;
 
-import com.example.sagar.SpringSecurityWithJWT.model.OrderResponse;
+import com.example.sagar.SpringSecurityWithJWT.mapper.OrderMapper;
+import com.example.sagar.SpringSecurityWithJWT.model.OrderDto;
 import com.example.sagar.SpringSecurityWithJWT.model.Order;
 import com.example.sagar.SpringSecurityWithJWT.model.Products;
 import com.example.sagar.SpringSecurityWithJWT.repository.OrderRepository;
@@ -42,102 +43,89 @@ public class OrderService {
     private JavaMailSender sender;
 
     @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
     private Configuration config;
 
-    public List<OrderResponse> getOrdersResponse(Integer userId,String status){
-        List<Order> orders=getOrders(userId,status);
-        List<OrderResponse> orderResponses=new ArrayList<>();
+    public List<OrderDto> getOrdersResponse(Integer userId, String status) {
+        List<Order> orders = getOrders(userId, status);
+        List<OrderDto> orderDtoList = new ArrayList<>();
 
-        for (Order o:orders){
-            Integer product_id=o.getProductId();
-            List<Products> products=productRepository.findAllByProductId(product_id);
-            Products singleProduct=products.get(0);
-            orderResponses.add(new OrderResponse(
-                    o.getOrderId(),
-                    o.getProductId(),
-                    o.getProductColor(),
-                    o.getProductSize(),
-                    o.getPrice(),
-                    o.getQty(),
-                    o.getOrderedDate(),
-                    o.getDelivered_date(),
-                    o.getDeliveryAddress(),
-                    o.getStatus(),
+        for (Order o : orders) {
+            Integer product_id = o.getProductId();
+            List<Products> products = productRepository.findAllByProductId(product_id);
+            Products singleProduct = products.get(0);
+            OrderDto orderDto = orderMapper.toDto(o);
+            orderMapper.setRemainingField(orderDto,
+                    userService.getUserName(o.getUserId()),
                     singleProduct.getProductName(),
-                    singleProduct.getDiscount(),
-                    singleProduct.getPicture_path()
-            ));
+                    singleProduct.getPicturePath(),
+                    userService.getPhone(o.getUserId()),
+                    singleProduct.getDiscount()
+            );
+            orderDtoList.add(orderDto);
         }
 
 
-
-        return  orderResponses;
+        return orderDtoList;
 
     }
 
 
-
-
-    public List<Order> getOrders(Integer userId,String status){
-        return orderRepository.getOrders(userId,status);
+    public List<Order> getOrders(Integer userId, String status) {
+        return orderRepository.getOrders(userId, status);
 
     }
 
 
     public void addOrders(Order order) throws MessagingException, IOException, TemplateException {
-
         orderRepository.save(order);
-        sendEmail(order,"ORDER CONFIRMATION");
+        sendEmail(order, "ORDER CONFIRMATION");
 
     }
 
-    public List<OrderResponse> getOrdersForSellers(Integer seller_id,String status){
-     List<Order> orders=   orderRepository.getOrdersForSeller(seller_id,status);
-     List<OrderResponse> orderResponses=new ArrayList<>();
+    public List<OrderDto> getOrdersForSellers(Integer seller_id, String status) {
+        List<Order> orders = orderRepository.getOrdersForSeller(seller_id, status);
+        List<OrderDto> orderDtoList = new ArrayList<>();
 
-     for (Order o:orders){
-            Integer product_id=o.getProductId();
-            List<Products> products=productRepository.findAllByProductId(product_id);
-            Products singleProduct=products.get(0);
-            orderResponses.add(new OrderResponse(
-                    o.getOrderId(),
+        for (Order o : orders) {
+            Integer product_id = o.getProductId();
+            List<Products> products = productService.findAllByProductId(product_id);
+            Products singleProduct = products.get(0);
+            OrderDto orderDto = orderMapper.toDto(o);
+            orderMapper.setRemainingField(orderDto,
                     userService.getUserName(o.getUserId()),
-                    userService.getPhone(o.getUserId()),
-                    o.getProductId(),
-                    o.getProductColor(),
-                    o.getProductSize(),
-                    o.getPrice(),
-                    o.getQty(),
-                    o.getOrderedDate(),
-                    o.getDelivered_date(),
-                    o.getDeliveryAddress(),
-                    o.getStatus(),
                     singleProduct.getProductName(),
-                    singleProduct.getDiscount(),
-                    singleProduct.getPicture_path()
-            ));
+                    singleProduct.getPicturePath(),
+                    userService.getPhone(o.getUserId()),
+                    singleProduct.getDiscount()
+            );
+            orderDtoList.add(orderDto);
+
         }
 
-        return orderResponses;
+        return orderDtoList;
 
 
     }
 
+
     public Integer countOrder(Integer seller_id, String status) {
-        return orderRepository.getOrdersForSeller(seller_id,status).size();
+        return orderRepository.getOrdersForSeller(seller_id, status).size();
     }
 
     public void changeStatus(Integer orderId, String status) throws MessagingException, IOException, TemplateException {
-        orderRepository.changeStatus(orderId,status);
-        sendEmail(orderRepository.getOne(orderId),status.toUpperCase());
+        orderRepository.changeStatus(orderId, status);
+        sendEmail(orderRepository.getOne(orderId), status.toUpperCase());
     }
 
     public void changeOrderedDate(Integer orderId, String deliveredDate) {
-        orderRepository.changeOrderedDate(orderId,deliveredDate);
+        orderRepository.changeOrderedDate(orderId, deliveredDate);
     }
 
     public void changeStock(Integer qty, Integer productId) {
-        productRepository.changeStock(qty,productId);
+        productRepository.changeStock(qty, productId);
     }
 
     public Integer getStock(Integer productId) {
@@ -145,39 +133,37 @@ public class OrderService {
     }
 
 
+    public void sendEmail(Order order, String mailType) throws MessagingException, IOException, TemplateException {
 
-    public void sendEmail(Order order,String mailType) throws MessagingException, IOException, TemplateException {
-
-        String userName=userService.getUserName(order.getUserId());
-        String productName=productService.getProductName(order.getProductId());
+        String userName = userService.getUserName(order.getUserId());
+        String productName = productService.getProductName(order.getProductId());
 
         MimeMessage message = sender.createMimeMessage();
-        Map<String, Object> model=new HashMap<>();
-        model.put("userName",userName);
-        model.put("productName",productName);
-        model.put("qty",order.getQty());
-        model.put("color",order.getProductColor());
-        model.put("size",order.getProductSize());
-        model.put("address",order.getDeliveryAddress());
-        model.put("price",order.getPrice());
-        model.put("status",order.getStatus());
+        Map<String, Object> model = new HashMap<>();
+        model.put("userName", userName);
+        model.put("productName", productName);
+        model.put("qty", order.getQuantity());
+        model.put("color", order.getProductColor());
+        model.put("size", order.getProductSize());
+        model.put("address", order.getDeliveryAddress());
+        model.put("price", order.getPrice());
+        model.put("status", order.getStatus());
 
 
-
-            // set mediaType
-            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                    StandardCharsets.UTF_8.name());
-            // add attachment
+        // set mediaType
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                StandardCharsets.UTF_8.name());
+        // add attachment
 //            helper.addAttachment("logo.png", new ClassPathResource("robot.png"));
 
-            Template t = config.getTemplate("email-template.ftl");
-            String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
+        Template t = config.getTemplate("email-template.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
 
-            helper.setTo(userName);
-            helper.setText(html, true);
-            helper.setSubject(mailType);
-            helper.setFrom("noreply@SMart.com");
-            sender.send(message);
+        helper.setTo(userName);
+        helper.setText(html, true);
+        helper.setSubject(mailType);
+        helper.setFrom("noreply@SMart.com");
+        sender.send(message);
 
 
     }

@@ -1,6 +1,5 @@
 package com.example.sagar.SpringSecurityWithJWT.repository;
 
-import com.example.sagar.SpringSecurityWithJWT.model.ReviewResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Reviews;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

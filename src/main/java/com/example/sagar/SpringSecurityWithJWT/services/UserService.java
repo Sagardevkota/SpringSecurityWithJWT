@@ -1,10 +1,7 @@
 package com.example.sagar.SpringSecurityWithJWT.services;
 
-import com.example.sagar.SpringSecurityWithJWT.model.OrderResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.Feedback;
-import com.example.sagar.SpringSecurityWithJWT.model.ProductResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.Products;
-import com.example.sagar.SpringSecurityWithJWT.model.User;
+import com.example.sagar.SpringSecurityWithJWT.mapper.ProductMapper;
+import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.repository.FeedbackRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
@@ -13,210 +10,152 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
 
     @Autowired
-   private OrderService orderService;
+    private OrderService orderService;   //this formed circular dependency so doing field injection
 
+    private final ProductRepository productRepository;
+    private final FeedbackRepository feedbackRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductMapper productMapper;
 
     @Autowired
-    private FeedbackRepository feedbackRepository;
-
-
-    public Boolean isVerified(String userName){
-        return   repository.isVerified(userName);
+    UserService(UserRepository userRepository,
+                ProductRepository productRepository,
+                FeedbackRepository feedbackRepository,
+                BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.repository = userRepository;
+        this.productRepository = productRepository;
+        this.feedbackRepository = feedbackRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public String register(User user){
+    public Boolean isVerified(String userName) {
+        return repository.isVerified(userName);
+    }
 
-       repository.save(new User(user.getUserName(),new BCryptPasswordEncoder().encode(user.getPassword()),user.getDeliveryAddress(),user.getPhone(),user.getRole(),user.getAge(),user.getGender(),user.getLatitude(),user.getLongitude()));
+    public void register(User user) {
 
-       return "ok";
+        repository.save(new User(user.getUserName(),
+                bCryptPasswordEncoder.encode(user.getPassword()),
+                user.getDeliveryAddress(),
+                user.getPhone(),
+                user.getRole(),
+                user.getAge(),
+                user.getGender(),
+                user.getLatitude(),
+                user.getLongitude()));
 
     }
 
-    public int getUserId(String userName){
-        return repository.getUserId(userName);
-    }
-
-    public int checkifUserExists(String userName){
+    public int checkifUserExists(String userName) {
         return repository.checkIfUserExist(userName).size();
     }
-    public int checkIfUserPhoneExists(String phone){
+
+    public int checkIfUserPhoneExists(String phone) {
         return repository.checkIfUserPhoneExist(phone).size();
     }
 
-
-    public User findUserDetails(String userName){
-        return repository.findAllByUserName(userName);
-    }
-
-
-    public String updateEmail(Integer userId,String newUserName){
-        if (checkifUserExists(newUserName)>0)
+    public String updateEmail(Integer userId, String newUserName) {
+        if (checkifUserExists(newUserName) > 0)
             return "User already exists";
         else {
-            repository.updateUserName(userId,newUserName);
+            repository.updateUserName(userId, newUserName);
             return "Updated Email";
         }
     }
 
     public String updatePhone(Integer userId, String newPhone) {
-        if (checkIfUserPhoneExists(newPhone)>0)
+        if (checkIfUserPhoneExists(newPhone) > 0)
             return "Phone is taken";
         else {
-            repository.updatePhone(userId,newPhone);
+            repository.updatePhone(userId, newPhone);
             return "Updated Phone";
         }
 
     }
 
     public String updateDelivery(Integer userId, String newDelivery) {
-        repository.updateDelivery(userId,newDelivery);
+        repository.updateDelivery(userId, newDelivery);
         return "Updated Delivery";
     }
 
-
-    public String getUserRole(String userName) {
-        return repository.getRole(userName);
-    }
-
-    public String getSellerName(Integer seller_id){
-
+    public String getUserName(Integer seller_id) {
         return repository.getSellerName(seller_id);
 
     }
 
 
-    public List<ProductResponse> getNearbyPeopleOrders(Integer userId){
+    public List<ProductDto> getNearbyPeopleOrders(Integer userId) {
 
-        List<ProductResponse> productResponses=new ArrayList<>();
+        List<ProductDto> productDtoList = new ArrayList<>();
 
         //get latlng
-     User user=   repository.findAllByUserId(userId);
-     Double latitude=user.getLatitude();
-     Double longitude=user.getLongitude();
+        User user = repository.findAllByUserId(userId);
+        Double latitude = user.getLatitude();
+        Double longitude = user.getLongitude();
 
-        List<OrderResponse> Totalorders=new ArrayList<>();
+        List<Integer> productIds = new ArrayList<>();
         //get Ids of nearBy people
-        List<Integer> user_Id=  findNearByUser(latitude,longitude,userId);
-
-  //get orders of those ids
-      
-    for (Integer id:user_Id){
-        List<OrderResponse> orderResponses=orderService.getOrdersResponse(id,"completed");
-        for (OrderResponse orderResponse:orderResponses)
-        {
-            Totalorders.add(new OrderResponse(orderResponse));
-        }
+        List<Integer> userIds = findNearByUser(latitude, longitude, userId);
 
 
+        //get orders of those ids
+        userIds.forEach(id -> {
+            List<OrderDto> orderRespons = orderService.getOrdersResponse(id, "completed");
+            orderRespons.forEach(orderResponse -> productIds.add(orderResponse.getProductId()));
+        });
+
+        List<Products> products = new ArrayList<>();
+
+        //get products
+        productIds.stream().distinct()
+                .sorted()
+                .forEach(productId -> {
+                    products.add(productRepository.getOneProduct(productId));
+                });
+
+
+        //finally get product response
+        products.forEach(products1 -> {
+            ProductDto productDto = productMapper.toDto(products1);
+            String rating = String.valueOf(productRepository.getRating(products1.getProductId()));
+            productMapper.setRating(rating, productDto);
+            productDtoList.add(productDto);
+        });
+
+
+        return productDtoList;
     }
 
-    List<Products> products=new ArrayList<>();
-
-    //get productIds
-        Integer [] productId=new Integer[Totalorders.size()];
-        int i=0;
-    for (OrderResponse orderResponse:Totalorders){
-        productId[i]=orderResponse.getProduct_id();
-        i++;
+    public User getUser(int userId) {
+        return repository.getOne(userId);
     }
 
-        Arrays.sort(productId);
-    int n=productId.length;
-
-    n=removeDuplicates(productId,n);
-
-    //get products
-        for (int count=0;count<n;count++){
-            products.add(new Products(productRepository.getOneProduct(productId[count])));
-        }
-
-
-        products.forEach(products1 ->
-                productResponses.add(new ProductResponse(
-                        products1.getProductId(),
-                        products1.getProductName(),
-                        products1.getDesc(),
-                        products1.getPrice(),
-                        products1.getCategory(),
-                        products1.getBrand(),
-                        products1.getSku(),
-                        products1.getType(),
-                        products1.getPicture_path(),
-                        products1.getDiscount(),
-                        products1.getStock(),
-                        products1.getSeller_id(),
-                        String.valueOf(productRepository.getRating(products1.getProductId()))
-                )));
-
-        return productResponses;
-    }
-
-    public List<Integer> findNearByUser(Double latitude,Double longitude,Integer user_id){
+    public List<Integer> findNearByUser(Double latitude, Double longitude, Integer user_id) {
 
         int radius = 50; // Km
 
-
         // Every lat|lon degree° is ~ 111Km
-        Double angle_radius = radius / ( 111 * Math.cos( latitude ) );
+        Double angle_radius = radius / (111 * Math.cos(latitude));
 
-    Double min_lat = latitude - angle_radius;
-    Double max_lat = latitude + angle_radius;
-    Double min_lon = longitude - angle_radius;
-    Double max_lon = longitude + angle_radius;
+        Double min_lat = latitude - angle_radius;
+        Double max_lat = latitude + angle_radius;
+        Double min_lon = longitude - angle_radius;
+        Double max_lon = longitude + angle_radius;
 
-        return  repository.findNearByUser(max_lat,min_lat,max_lon,min_lon,user_id);
+        return repository.findNearByUser(max_lat, min_lat, max_lon, min_lon, user_id);
     }
 
-    // Function to remove duplicate elements
-    // This function returns new size of modified
-    // array.
-    static int removeDuplicates(Integer[] arr, int n)
-    {
-        // Return, if array is empty
-        // or contains a single element
-        if (n==0 || n==1)
-            return n;
-
-        int[] temp = new int[n];
-
-        // Start traversing elements
-        int j = 0;
-        for (int i=0; i<n-1; i++)
-            // If current element is not equal
-            // to next element then store that
-            // current element
-            if (!arr[i].equals(arr[i + 1]))
-                temp[j++] = arr[i];
-
-        // Store the last element as whether
-        // it is unique or repeated, it hasn't
-        // stored previously
-        temp[j++] = arr[n-1];
-
-        // Modify original array
-        for (int i=0; i<j; i++)
-            arr[i] = temp[i];
-
-        return j;
-    }
-
-    public String  getUserName(Integer userId) {
-       return repository.getUserName(userId);
-    }
 
     public String getPhone(Integer userId) {
         return repository.getPhone(userId);

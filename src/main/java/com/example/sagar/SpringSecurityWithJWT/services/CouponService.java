@@ -10,12 +10,16 @@ import java.util.List;
 @Service
 public class CouponService {
 
+    private final CouponRepository couponRepository;
+
     @Autowired
-    private CouponRepository couponRepository;
+    CouponService(CouponRepository couponRepository) {
+        this.couponRepository = couponRepository;
+    }
 
-    public List<Coupons> checkCoupon(Coupons coupons){
-
-        return couponRepository.findAllByCoupon_code(coupons.getCoupon_code(),coupons.getProduct_id());
+    public List<Coupons> checkCoupon(Coupons coupons) {
+        return couponRepository.findAllByCoupon_code(coupons.getCoupon_code(),
+                coupons.getProduct_id());
 
     }
 

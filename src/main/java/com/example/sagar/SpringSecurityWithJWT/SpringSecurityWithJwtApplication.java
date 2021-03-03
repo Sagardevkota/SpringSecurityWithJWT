@@ -3,22 +3,20 @@ package com.example.sagar.SpringSecurityWithJWT;
 
 import com.google.common.collect.Lists;
 import org.springframework.boot.SpringApplication;
-
-
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
+import org.springframework.web.client.RestTemplate;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.*;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,13 +26,16 @@ import java.util.List;
 public class SpringSecurityWithJwtApplication {
 
     public static void main(String[] args) {
-
         SpringApplication.run(SpringSecurityWithJwtApplication.class, args);
     }
 
     @Bean
-    public Docket swaggerConfiguration()
-    {
+    public RestTemplate provideRestTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public Docket swaggerConfiguration() {
 
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
@@ -42,22 +43,18 @@ public class SpringSecurityWithJwtApplication {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .securitySchemes(Arrays.asList(apiKey()))
-                .securityContexts(Arrays.asList(securityContext()))
-                .useDefaultResponseMessages(false)
-
-
-                ;
+                .securitySchemes(Collections.singletonList(apiKey()))
+                .securityContexts(Collections.singletonList(securityContext()))
+                .useDefaultResponseMessages(false);
     }
 
-    private ApiInfo apiInfo()
-    {
+    private ApiInfo apiInfo() {
         return new ApiInfo(
                 "SMART API",
-                "API for applications owned by S-Mart company. <br> While Using API first login from home contoller and get jwt token. Then Authorize it by providing value as Bearer jwt <br> Check our our new corona tracker application.go to api/corona",
+                "API for applications owned by S-Mart company. <br> While Using API first login from home controller and get jwt token. Then Authorize it by providing value as Bearer jwt ",
                 "1.0",
                 "Contact sagar devkota to use",
-                new springfox.documentation.service.Contact("Sagar Devkota","sagardevkota.com","sagardevkota55@gmail.com"),
+                new springfox.documentation.service.Contact("Sagar Devkota", "sagardevkota.com", "sagardevkota55@gmail.com"),
                 "Apache License",
                 "http://sagar.com",
                 Collections.emptyList()
@@ -71,7 +68,7 @@ public class SpringSecurityWithJwtApplication {
     }
 
     private springfox.documentation.spi.service.contexts.SecurityContext securityContext() {
-        return  springfox.documentation.spi.service.contexts.SecurityContext.builder()
+        return springfox.documentation.spi.service.contexts.SecurityContext.builder()
                 .securityReferences(defaultAuth())
                 .forPaths(PathSelectors.any())
                 .build();

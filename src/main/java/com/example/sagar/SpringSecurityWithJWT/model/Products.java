@@ -1,71 +1,67 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 
-@Setter
-@ToString
 @Entity(name = "products")
 @Table(name = "products")
-@Getter
+@Data
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Products {
 
     @Id
     @Column(name = "product_id",nullable = false,unique = true)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int productId;
+
+    @NotBlank(message = "Product Name is mandatory")
+    @Length(min = 2)
     @Column(name = "product_name")
     private String productName;
+
+    @NotBlank(message = "Product Description is mandatory")
     @Column(name = "description")
     private String desc;
 
+    @NotBlank(message = "Product Price is mandatory")
     @Column(name = "price")
     private String price;
+
+    @NotBlank(message = "Product Category is mandatory")
     @Column(name = "category")
     private String category;
+
+    @NotBlank(message = "Product Brand is mandatory")
     @Column(name = "brand")
     private String brand;
     @Column(name = "sku")
     private String sku;
+
+    @NotBlank(message = "Product Type is mandatory")
     @Column(name = "type")
     private String type;
 
+    @NotBlank(message = "Product Picture Path is mandatory")
     @Column(name = "picture_path")
-    private String picture_path;
+    private String picturePath;
 
+    @NotBlank(message = "Product Discount is mandatory")
     @Column(name = "discount")
     private Integer discount;
 
+    @NotBlank(message = "Product Stock is mandatory")
     @Column(name = "stock")
     private Integer stock;
 
+    @NotBlank(message = "Seller Id is mandatory")
     @Column(name = "seller_id")
     private Integer seller_id;
-
-
-
-
-    public Products(Products p){
-        this.productId = p.getProductId();
-        this.productName = p.getProductName();
-        this.desc = p.getDesc();
-        this.price=p.getPrice();
-        this.category = p.getCategory();
-        this.brand = p.getBrand();
-        this.sku = p.getSku();
-        this.type = p.getType();
-        this.picture_path = p.getPicture_path();
-        this.discount = p.getDiscount();
-        this.stock = p.getStock();
-        this.seller_id=p.getSeller_id();
-
-    }
 
 
 

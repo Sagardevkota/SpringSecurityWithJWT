@@ -1,27 +1,30 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-public class ProductResponse {
+public class CartDto {
 
     private int productId;
     private String productName;
     private String desc;
-    private String price;
     private String category;
     private String brand;
     private String sku;
     private String type;
-    private String picture_path;
+    private String picturePath;
     private Integer discount;
     private Integer stock;
-    private Integer seller_id;
-    private String rating;
+    private String color;
+    private float size;
+    private String price;
+
+
+
+
+
 
 }

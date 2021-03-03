@@ -10,8 +10,12 @@ import java.util.List;
 @Service
 public class ColorAttrService {
 
+    private final ColorRepository colorRepository;
+
     @Autowired
-    private ColorRepository colorRepository;
+    ColorAttrService(ColorRepository colorRepository){
+        this.colorRepository = colorRepository;
+    }
 
     public List<ColorAttribute> getColors(Integer product_id){
         return colorRepository.findAllByProduct_id(product_id);

@@ -2,7 +2,6 @@ package com.example.sagar.SpringSecurityWithJWT.repository;
 
 import com.example.sagar.SpringSecurityWithJWT.model.Conversation;
 
-import com.example.sagar.SpringSecurityWithJWT.model.MessageResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

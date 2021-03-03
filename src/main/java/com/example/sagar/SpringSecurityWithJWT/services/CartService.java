@@ -1,6 +1,7 @@
 package com.example.sagar.SpringSecurityWithJWT.services;
 
-import com.example.sagar.SpringSecurityWithJWT.model.CartResponse;
+import com.example.sagar.SpringSecurityWithJWT.mapper.CartMapper;
+import com.example.sagar.SpringSecurityWithJWT.model.CartDto;
 import com.example.sagar.SpringSecurityWithJWT.model.Carts;
 import com.example.sagar.SpringSecurityWithJWT.model.Products;
 import com.example.sagar.SpringSecurityWithJWT.repository.CartRepository;
@@ -15,13 +16,19 @@ import java.util.List;
 
 public class CartService {
 
-    @Autowired
-    private CartRepository cartRepository;
+    private final CartRepository cartRepository;
 
-    public List<CartResponse> getCartList(Integer userId)
+    private final CartMapper cartMapper;
+    @Autowired
+    CartService(CartRepository cartRepository, CartMapper cartMapper){
+        this.cartRepository = cartRepository;
+        this.cartMapper = cartMapper;
+    }
+
+    public List<CartDto> getCartList(Integer userId)
     {
         List<Products> products=cartRepository.getCartList(userId);
-        List<CartResponse> cartResponseList=new ArrayList<>();
+        List<CartDto> cartDtoList =new ArrayList<>();
         for (Products p:products){
             String color=cartRepository.getcolor(p.getProductId(),userId);
             Float size=cartRepository.getSize(p.getProductId(),userId);
@@ -31,23 +38,30 @@ public class CartService {
             if (size==0)
                 size=0f;
             System.out.println(p.toString());
-            cartResponseList.add(new CartResponse(p.getProductId(),
-                    p.getProductName(),
-                    p.getDesc(),
-                    price,
-                    p.getCategory(),
+            Carts carts = Carts.builder()
+                    .product_id(p.getProductId())
+                    .color(color)
+                    .size(String.valueOf(size))
+                    .price(price)
+                    .build();
+            CartDto cartDto = cartMapper.toDto(carts);
+            cartMapper.setRemainingField(
+                    cartDto,
                     p.getBrand(),
-                    p.getSku(),
-                    p.getType(),
-                    p.getPicture_path(),
+                    p.getCategory(),
+                    p.getDesc(),
                     p.getDiscount(),
-                   p.getStock(),
-                   color,
-                    size
+                    p.getPicturePath(),
+                    p.getProductName(),
+                    p.getSku(),
+                    p.getStock(),
+                    p.getType()
+                    );
+            cartDtoList.add(cartDto);
 
-                    ));
+
         }
-        return cartResponseList;
+        return cartDtoList;
     }
 
     public String addToCartList(Carts carts)
@@ -64,7 +78,8 @@ public class CartService {
     }
 
     public List<Carts> checkIfCartItemExists(Carts carts){
-       return cartRepository.findAllByProduct_idAndUser_id(carts.getProduct_id(),carts.getUser_id());
+       return cartRepository.findAllByProduct_idAndUser_id
+               (carts.getProduct_id(),carts.getUser_id());
     }
 
 

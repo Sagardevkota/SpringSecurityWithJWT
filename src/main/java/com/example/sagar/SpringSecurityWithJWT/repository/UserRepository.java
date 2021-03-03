@@ -52,7 +52,7 @@ public interface UserRepository extends JpaRepository<com.example.sagar.SpringSe
     @Query(value="SELECT user_name from user_info where user_id=?1",nativeQuery=true)
     String getSellerName(Integer seller_id);
 
-    @Query(value="SELECT user_id from user_info WHERE latitude BETWEEN ?1 AND ?2 AND longitude BETWEEN ?3 AND ?4 AND user_id!=?5 ",nativeQuery=true)
+    @Query(value="SELECT DISTINCT user_id from user_info WHERE latitude BETWEEN ?1 AND ?2 AND longitude BETWEEN ?3 AND ?4 AND user_id!=?5 ",nativeQuery=true)
     List<Integer> findNearByUser( Double max_lat,Double min_lat,Double max_lon,Double min_lon,Integer user_id);
 
     @Query(value="SELECT * from user_info where user_id=?1",nativeQuery=true)

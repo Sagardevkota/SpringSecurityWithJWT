@@ -1,6 +1,7 @@
 package com.example.sagar.SpringSecurityWithJWT.controller;
 
 
+import com.example.sagar.SpringSecurityWithJWT.configuration.MyUserDetailService;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.UserService;
 import com.example.sagar.SpringSecurityWithJWT.util.JwtUtil;
@@ -9,149 +10,78 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
 @RestController
-public class HomeController
-{
+public class HomeController {
+
+    private final AuthenticationManager authenticationManager; //for authenticating with jdbc in login
+    private final MyUserDetailService userDetailsService;
+    private final UserService userService; //for handling user services
+    private final JwtUtil jwtUtil; //for generating token
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    private UserService userService;
-
-
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-
-    @RequestMapping(value = "/login",method = RequestMethod.POST)
-    public JwtResponse createAuthenticationToken(@RequestBody User user) {
-   try
-   {
-       authenticationManager.authenticate(
-               new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword())
-     );
-   }
-   catch (BadCredentialsException e){
-
-       return new JwtResponse("409 Confilct","Incorrect email or password");
-   }
-   final UserDetails userDetails= userDetailsService
-           .loadUserByUsername(user.getUserName());
-
-      final String jwt=jwtUtil.generateToken(userDetails);
-    String role= getUserRole(user.getUserName());
-     return new JwtResponse(jwt,"200 OK","login successfull",role);
+    HomeController(AuthenticationManager authenticationManager,
+                   MyUserDetailService userDetailsService,
+                   UserService userService,
+                   JwtUtil jwtUtil) {
+        this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService;
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
 
-    @RequestMapping(value = "/verified/{userName}",method = RequestMethod.GET)
-    public Boolean isVerified(@PathVariable String userName)
-    {
-        return userService.isVerified(userName);
+    @PostMapping(value = "/login")
+    public JwtResponse createAuthenticationToken(@Valid @RequestBody UserDto user) {
+
+        //this end point is not secured by spring security so we manually authenticate with authentication manager
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword())
+            );
+        }
+
+        //if not authenticated throw and catch and show error
+        catch (BadCredentialsException e) {
+
+            return new JwtResponse("409 Confilct", "Incorrect email or password");
+        }
+
+        //get userDetails with current username
+        final UserDetails userDetails = userDetailsService
+                .loadUserByUsername(user.getUserName());
+
+
+        //generate jwt by providing userdetails
+        int id = userDetailsService.getId();
+        final String jwt = jwtUtil.generateToken(userDetails, id);
+        String role = userDetails.getAuthorities().toString();
+        return new JwtResponse(jwt, "200 OK", "login successful", role);
     }
 
-    @RequestMapping(value = "/register",method = RequestMethod.POST)
-    public JsonResponse register(@RequestBody User user)
-    {
 
-        if (userService.checkifUserExists(user.getUserName())>0)
-            return  new JsonResponse("409 Conflict","User already exists");
-        if (userService.checkIfUserPhoneExists(user.getPhone())>0)
-            return new JsonResponse("409 Conflict","Phone number is taken");
-        else
-        {
+    @PostMapping(value = "/register")
+    public JsonResponse register(@Valid @RequestBody User user) {
+
+        if (userService.checkifUserExists(user.getUserName()) > 0)
+            return new JsonResponse("409 Conflict", "User already exists");
+        if (userService.checkIfUserPhoneExists(user.getPhone()) > 0)
+            return new JsonResponse("409 Conflict", "Phone number is taken");
+        else {
             userService.register(user);
-            return new JsonResponse("200 Ok","Registered successfully");
+            return new JsonResponse("200 Ok", "Registered successfully");
         }
-
-
-
     }
 
 
-    public String getUserRole( String userName)
-    {
-        return userService.getUserRole(userName);
-    }
-
-    @RequestMapping(value = "/user/id/{userName}",method = RequestMethod.GET)
-    public JsonResponse getUserId(@PathVariable String userName)
-    {
-        return new JsonResponse("200 OK",String.valueOf(userService.getUserId(userName)));
-    }
-
-
-    @RequestMapping(value = "/user/{userName}",method = RequestMethod.GET)
-    public User getUserDetails(@PathVariable String userName)
-    {
-        User user=userService.findUserDetails(userName);
-        return new User(user.getId(),user.getUserName(),user.getDeliveryAddress(),user.getPhone(),user.getAge(),user.getGender(),user.getRole());
-
-            }
-
-    @RequestMapping(value = "/user/{userId}/userName/{newUserName}",method = RequestMethod.PUT)
-    public JsonResponse updateEmail(@PathVariable Integer userId,@PathVariable String newUserName)
-    {
-      String message=  userService.updateEmail(userId,newUserName);
-      if (message.equalsIgnoreCase("User already exists"))
-
-        return new JsonResponse("409 Conflict",message);
-      else{
-          return new JsonResponse("200 Ok",message);
-      }
-
-    }
-
-    @RequestMapping(value = "/user/{userId}/phone/{newPhone}",method = RequestMethod.PUT)
-    public JsonResponse updatePhone(@PathVariable Integer userId,@PathVariable String newPhone)
-    {
-
-        String message=  userService.updatePhone(userId,newPhone);
-        if (message.equalsIgnoreCase("Phone is taken"))
-
-            return new JsonResponse("409 Conflict",message);
-        else{
-            return new JsonResponse("200 Ok",message);
-        }
-
-    }
-    @RequestMapping(value = "/user/{userId}/delivery/{newDelivery}",method = RequestMethod.PUT)
-    public JsonResponse updateDelivery(@PathVariable Integer userId,@PathVariable String newDelivery)
-    {
-        String message=  userService.updateDelivery(userId,newDelivery);
-        return new JsonResponse("200 OK",message);
-
-
-    }
-
-
-    @RequestMapping(value = "/seller/{sellerId}/name",method = RequestMethod.GET)
-    public JsonResponse getSellerName(@PathVariable Integer sellerId){
-        String userName=  userService.getSellerName(sellerId);
-      return new JsonResponse("200 OK",userName);
-    }
-
-    @RequestMapping(value = "/order/nearby/{userId}",method = RequestMethod.GET)
-    public List<ProductResponse> getNearByPeopleOrders(@PathVariable Integer userId){
+    @GetMapping(value = "/order/nearby/{userId}")
+    public List<ProductDto> getNearByPeopleOrders(@PathVariable Integer userId) {
         return userService.getNearbyPeopleOrders(userId);
-    }
-
-
-    @RequestMapping(value = "/feedback",method = RequestMethod.POST)
-    public JsonResponse addFeedback(@RequestBody Feedback feedback){
-         userService.saveFeedback(feedback);
-         return new JsonResponse("200 Ok","Added feedback");
     }
 
 

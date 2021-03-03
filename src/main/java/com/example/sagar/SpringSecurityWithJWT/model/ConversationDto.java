@@ -1,5 +1,6 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,14 +8,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ReviewResponse {
-
-    private Integer id;
-    private String user_name;
-    private Integer product_id;
+public class ConversationDto {
     private String message;
-    private String rating;
+    private String user_name;
     private String date;
-
 
 }

@@ -1,226 +1,124 @@
 package com.example.sagar.SpringSecurityWithJWT.controller;
 
+import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.ColorAttrService;
 import com.example.sagar.SpringSecurityWithJWT.services.ProductService;
 import com.example.sagar.SpringSecurityWithJWT.services.SizeAttrService;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+
+    private final ProductService productService;
+    private final ColorAttrService colorAttrService;
+    private final SizeAttrService sizeAttrService;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    private ColorAttrService colorAttrService;
-
-    @Autowired
-    private SizeAttrService sizeAttrService;
-
-
-    @RequestMapping(value = "/product" , method = RequestMethod.POST)
-    public JsonResponse addProduct(@RequestBody Products products){
-
-        try {
-            productService.addProduct(products);
-
-
-         Integer product_id=productService.getProductId(products.getProductName());
-
-            return new JsonResponse("200 Ok",String.valueOf(product_id));
-
-        }
-        catch (Exception e){
-            return new JsonResponse("500 Internal error",e.getMessage());
-        }
-
-
+    ProductController(ProductService productService, ColorAttrService colorAttrService, SizeAttrService sizeAttrService, RestTemplate restTemplate) {
+        this.productService = productService;
+        this.colorAttrService = colorAttrService;
+        this.sizeAttrService = sizeAttrService;
+        this.restTemplate = restTemplate;
     }
 
-    @RequestMapping(value = "/product" ,method = RequestMethod.PUT)
-    public JsonResponse updateProduct(@RequestBody Products products)
-    {
-        try {
-            productService.updateProduct(products);
-            return new JsonResponse("200 OK","Updated product");
-        }
-        catch (Exception e){
-            return new JsonResponse("500 Internal Server error",e.getMessage());
-        }
 
 
-    }
+    @GetMapping(value = "/products/{pageNumber}")
+    public List<ProductDto> getAllProducts(@PathVariable Integer pageNumber, @CurrentSecurityContext Authentication authentication) {
+//        List<ProductDto> list;
+//        list = getRecommendedProducts(getUserId(authentication));
+//        //if we have no recommendation just return what is in db
+//        if (list.size()==0)
+//        return productService.getAllProducts(pageNumber);
+//        else
+//            return list;
 
-    @RequestMapping(value = "/product/{pageNumber}" ,method = RequestMethod.GET)
-    public List<ProductResponse> getAllProducts(@PathVariable Integer pageNumber)
-    {
         return productService.getAllProducts(pageNumber);
+
+    }
+    private int getUserId(Authentication authentication){
+        UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
+        return user.getId();
     }
 
-    @RequestMapping(value = "/product/id/{id}",method = RequestMethod.GET)
-    public List<Products> getOneProducts(@PathVariable Integer id)
-    {
+    private List<ProductDto> getRecommendedProducts(int userId){
+        List<ProductDto> productRespons = new ArrayList<>();
+        String url = "http://localhost:9091/products/userId/{userId}";
+        Map<String, Integer> vars = new HashMap<>();
+        vars.put("userId", userId);
+        String object = restTemplate.getForObject(url,
+                String.class, vars);
+        return productRespons;
+    }
 
+    @GetMapping(value = "/products/id/{id}")
+    public Products getOneProduct(@PathVariable Integer id) {
         return productService.getOneProduct(id);
     }
 
-    @RequestMapping(value = "/product/{query}/{queryValue}/{sorting}",method = RequestMethod.GET)
-    public List<ProductResponse> getProducts(@PathVariable String query,@PathVariable String queryValue,@PathVariable String sorting)
-    {
-        List<ProductResponse> products=new ArrayList<>();
-        switch (query)
-        {
+    @GetMapping(value = "/products/{query}/{queryValue}/{sorting}")
+    public List<ProductDto> getProducts(@PathVariable String query, @PathVariable String queryValue, @PathVariable String sorting) {
+        List<ProductDto> products = new ArrayList<>();
+        switch (query) {
             case "category":
-                products= productService.getProductsByCategory(queryValue,sorting);
+                products = productService.getProductsByCategory(queryValue, sorting);
                 break;
             case "brand":
-                products=productService.getProductsByBrands(queryValue,sorting);
+                products = productService.getProductsByBrands(queryValue, sorting);
                 break;
             case "type":
-                products=productService.getProductsByType(queryValue,sorting);
+                products = productService.getProductsByType(queryValue, sorting);
                 break;
         }
         return products;
     }
 
-    @RequestMapping(value = "/product/type/{type}/category/{category}/{sorting}",method = RequestMethod.GET)
-    public List<ProductResponse> getProductsByTypeAndCategory(@PathVariable String type,@PathVariable String category,@PathVariable String sorting)
-    {
-        List<ProductResponse> products;
-       products=productService.getProductsByTypeAndCategory(type,category,sorting);
+    @GetMapping(value = "/products/type/{type}/category/{category}/{sorting}")
+    public List<ProductDto> getProductsByTypeAndCategory(@PathVariable String type, @PathVariable String category, @PathVariable String sorting) {
+        List<ProductDto> products;
+        products = productService.getProductsByTypeAndCategory(type, category, sorting);
         return products;
     }
 
-    @RequestMapping(value = "/product/query/{query}",method = RequestMethod.GET)
-    public List<ProductResponse> searchProduct(@PathVariable String query)
-    {
-        return  productService.getProductsByQuery(query);
+    @GetMapping(value = "/products/query/{query}")
+    public List<ProductDto> searchProduct(@PathVariable String query) {
+        return productService.getProductsByQuery(query);
     }
 
-    @RequestMapping(value = "/color/{productId}",method = RequestMethod.GET)
-    public List<ColorAttribute> getColors(@PathVariable Integer productId)
-    {
-        return  colorAttrService.getColors(productId);
+    @GetMapping(value = "/colors/{productId}")
+    public List<ColorAttribute> getColors(@PathVariable Integer productId) {
+        return colorAttrService.getColors(productId);
     }
 
-    @RequestMapping(value = "/size/{productId}",method = RequestMethod.GET)
-    public List<SizeAttribute> getSizes(@PathVariable Integer productId)
-    {
-        return  sizeAttrService.getSizes(productId);
-    }
-
-    @RequestMapping(value = "/color",method = RequestMethod.POST)
-    public JsonResponse addColor(@RequestBody ColorAttribute colorAttribute)
-    {
-        try {
-            String color=colorAttribute.getColor();
-            if (!color.isEmpty()){
-
-                productService.clearColors(colorAttribute.getProduct_id());
-                List<String> colorList = Arrays.asList(color.split(","));
-                for (String color1:colorList) {
-                    ColorAttribute colorAttribute1=new ColorAttribute(colorAttribute.getProduct_id(),color1.trim());
-                    productService.addColor(colorAttribute1);
-                }
-            }
-
-            return new JsonResponse("200 OK","Color added");
-        }
-
-        catch (Exception e){
-            return new JsonResponse("500 Internal Server error",e.getMessage());
-        }
-
-    }
-
-    @RequestMapping(value = "/size",method = RequestMethod.POST)
-    public JsonResponse addColor(@RequestBody SizeAttribute sizeAttribute)
-    {
-        try {
-
-            String size=String.valueOf(sizeAttribute.getSize());
-            if (!size.isEmpty()){
-                productService.clearSizes(sizeAttribute.getProduct_id());
-                List<String> sizeList = Arrays.asList(size.split(","));
-                for (String size1:sizeList) {
-                    SizeAttribute sizeAttribute1=new SizeAttribute(sizeAttribute.getProduct_id(),size1);
-                    productService.addSize(sizeAttribute1);
-                }
-            }
-
-            return new JsonResponse("200 OK","Size added");
-        }
-
-        catch (Exception e){
-            return new JsonResponse("500 Internal Server error",e.getMessage());
-        }
-
-    }
-
-
-
-    @RequestMapping(value = "/image",method = RequestMethod.POST)
-    public JsonResponse uploadImage(@RequestParam("image")  MultipartFile image) {
-
-       return productService.saveImage(image);
-
-    }
-
-    @RequestMapping(value = "/product/sellerId/{sellerId}",method = RequestMethod.GET)
-    public List<Products> getProductsOFSeller(@PathVariable Integer sellerId)
-    {
-
-        return productService.getProductsOfSeller(sellerId);
-    }
-
-    @RequestMapping(value = "/product/{productId}",method = RequestMethod.DELETE)
-    public JsonResponse deleteProduct(@PathVariable Integer productId)
-    {
-        //first clear all related info or else foreign key constraint fails will occur
-        productService.clearSizes(productId);
-        productService.clearColors(productId);
-
-        //now delete the product
-        productService.deleteProduct(productId);
-
-        return new JsonResponse("200 OK","Deleted the item");
+    @GetMapping(value = "/sizes/{productId}")
+    public List<SizeAttribute> getSizes(@PathVariable Integer productId) {
+        return sizeAttrService.getSizes(productId);
     }
 
 
     //reviews
-    @RequestMapping(value = "/reviews/{productId}",method = RequestMethod.GET)
-    public List<ReviewResponse> getReviews(@PathVariable Integer productId)
-    {
+    @GetMapping(value = "/reviews/{productId}")
+    public List<ReviewDto> getReviews(@PathVariable Integer productId) {
         return productService.getReviews(productId);
     }
 
-    @RequestMapping(value = "/reviews/{productId}/{userId}",method = RequestMethod.GET)
-    public Reviews getOneReview(@PathVariable Integer productId, @PathVariable Integer userId)
-    {
-        return productService.getOneReview(productId,userId);
-    }
-
-    @RequestMapping(value = "/reviews",method = RequestMethod.POST)
-    public JsonResponse addReview(@RequestBody Reviews reviews)
-    {
-         productService.addReviews(reviews);
-         return new JsonResponse("200 OK","Added review");
-    }
-
-    @RequestMapping(value = "/reviews",method = RequestMethod.PUT)
-    public JsonResponse updateReview(@RequestBody Reviews reviews)
-    {
-        productService.updateReview(reviews);
-        return new JsonResponse("200 OK","Updated review");
+    @GetMapping(value = "/reviews/{productId}/{userId}")
+    public Reviews getOneReview(@PathVariable Integer productId, @PathVariable Integer userId) {
+        return productService.getOneReview(productId, userId);
     }
 
 

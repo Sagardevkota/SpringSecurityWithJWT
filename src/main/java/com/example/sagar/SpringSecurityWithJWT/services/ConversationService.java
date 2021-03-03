@@ -1,35 +1,40 @@
 package com.example.sagar.SpringSecurityWithJWT.services;
 
-import com.example.sagar.SpringSecurityWithJWT.model.*;
+import com.example.sagar.SpringSecurityWithJWT.model.Conversation;
+import com.example.sagar.SpringSecurityWithJWT.model.ConversationDto;
+import com.example.sagar.SpringSecurityWithJWT.model.MessageDto;
+import com.example.sagar.SpringSecurityWithJWT.model.Products;
 import com.example.sagar.SpringSecurityWithJWT.repository.ConversationRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ConversationService {
 
-    @Autowired
-    private ConversationRepository conversationRepository;
+    private final ConversationRepository conversationRepository;
+    private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    ConversationService(ConversationRepository conversationRepository, ProductRepository productRepository, UserRepository userRepository){
+        this.conversationRepository = conversationRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+    }
 
-    @Autowired
-    private UserRepository userRepository;
+    public List<ConversationDto> getConversations(Integer productId){
+        List<ConversationDto> conv=new ArrayList<>();
+        conversationRepository.getConversations(productId).forEach(conversation -> {
+            List<String> userName=getUserName(conversation.getAsker());
+            conv.add(new ConversationDto(conversation.getMessage(),
+                    userName.get(0),
+                    conversation.getDate()));
+        });
 
-    public List<ConversationResponse> getConversations(Integer productId){
-        List<ConversationResponse> conv=new ArrayList<>();
-
-        for (Conversation c:conversationRepository.getConversations(productId))
-        {
-            List<String> userName=getUserName(c.getAsker());
-            conv.add(new ConversationResponse(c.getMessage(),userName.get(0),c.getDate()));
-        }
         return  conv;
     }
 
@@ -42,9 +47,9 @@ public class ConversationService {
         conversationRepository.save(conversation);
     }
 
-    public List<MessageResponse> getConversationList(Integer sellerId) {
+    public List<MessageDto> getConversationList(Integer sellerId) {
 
-        List<MessageResponse> messageResponses=new ArrayList<>();
+        List<MessageDto> messageRespons =new ArrayList<>();
         List<Integer> productIds=productRepository.getProductIds(sellerId);
         for (Integer id:productIds)
         {
@@ -57,13 +62,13 @@ public class ConversationService {
 
                 //get picture path and product name
                 Products products=productRepository.getOneProduct(Integer.valueOf(conversation.getProductId()));
-                String picture_path=products.getPicture_path();
+                String picture_path=products.getPicturePath();
                 String product_name=products.getProductName();
 
                 //get username
                 String userName= userRepository.getUserName(products.getSeller_id());
 
-                MessageResponse messageResponse= new MessageResponse(products.getProductId(),
+                MessageDto messageDto = new MessageDto(products.getProductId(),
                         picture_path,
                         product_name,
                         conversation.getMessage(),
@@ -71,13 +76,13 @@ public class ConversationService {
                         conversation.getDate()
                 );
 
-                messageResponses.add(new MessageResponse(messageResponse));
+                messageRespons.add(new MessageDto(messageDto));
 
             }
 
 
         }
-        return messageResponses;
+        return messageRespons;
 
     }
 }
