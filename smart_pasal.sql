@@ -3,15 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 02, 2021 at 10:54 AM
+-- Generation Time: Apr 02, 2021 at 11:50 AM
 -- Server version: 10.4.18-MariaDB
 -- PHP Version: 8.0.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -182,8 +180,8 @@ CREATE TABLE `products` (
   `discount` int(11) DEFAULT 0,
   `stock` int(11) NOT NULL,
   `seller_id` int(11) NOT NULL,
-  `colors` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '[]',
-  `sizes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '[]'
+  `colors` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `sizes` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
