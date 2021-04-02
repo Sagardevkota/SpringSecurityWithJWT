@@ -2,18 +2,23 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
 
 
 import com.example.sagar.SpringSecurityWithJWT.configuration.MyUserDetailService;
+import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
+import com.example.sagar.SpringSecurityWithJWT.services.CartService;
 import com.example.sagar.SpringSecurityWithJWT.services.UserService;
 import com.example.sagar.SpringSecurityWithJWT.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -23,16 +28,18 @@ public class HomeController {
     private final MyUserDetailService userDetailsService;
     private final UserService userService; //for handling user services
     private final JwtUtil jwtUtil; //for generating token
+    private final CartService cartService;
 
     @Autowired
     HomeController(AuthenticationManager authenticationManager,
                    MyUserDetailService userDetailsService,
                    UserService userService,
-                   JwtUtil jwtUtil) {
+                   JwtUtil jwtUtil, CartService cartService) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.userService = userService;
         this.jwtUtil = jwtUtil;
+        this.cartService = cartService;
     }
 
 
@@ -59,7 +66,7 @@ public class HomeController {
 
         //generate jwt by providing userdetails
         int id = userDetailsService.getId();
-        final String jwt = jwtUtil.generateToken(userDetails, id);
+        final String jwt = jwtUtil.generateToken(userDetails);
         String role = userDetails.getAuthorities().toString();
         return new JwtResponse(jwt, "200 OK", "login successful", role);
     }
@@ -73,15 +80,28 @@ public class HomeController {
         if (userService.checkIfUserPhoneExists(user.getPhone()) > 0)
             return new JsonResponse("409 Conflict", "Phone number is taken");
         else {
-            userService.register(user);
+
+            userService.register(user,"USER");
             return new JsonResponse("200 Ok", "Registered successfully");
         }
     }
 
 
-    @GetMapping(value = "/order/nearby/{userId}")
-    public List<ProductDto> getNearByPeopleOrders(@PathVariable Integer userId) {
-        return userService.getNearbyPeopleOrders(userId);
+    @GetMapping(value = "/orders/nearby")
+    public List<ProductDto> getNearByPeopleOrders(@CurrentSecurityContext Authentication authentication) {
+        return userService.getNearbyPeopleOrders(getUserId(authentication));
+    }
+
+    private int getUserId(Authentication authentication){
+        UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
+        return user.getId();
+    }
+
+    @GetMapping("/user-details")
+    private User getUser(@CurrentSecurityContext Authentication authentication){
+        User user = userService.getUser(getUserId(authentication));
+        user.setCartCount(cartService.getBadgeCount(getUserId(authentication)));
+        return user;
     }
 
 

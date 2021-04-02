@@ -1,7 +1,12 @@
 package com.example.sagar.SpringSecurityWithJWT;
 
 
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.example.sagar.SpringSecurityWithJWT.properties.AzureBlobProperties;
 import com.google.common.collect.Lists;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -81,6 +86,18 @@ public class SpringSecurityWithJwtApplication {
         authorizationScopes[0] = authorizationScope;
         return Lists.newArrayList(
                 new SecurityReference("JWT", authorizationScopes));
+    }
+
+
+    @Autowired
+    private AzureBlobProperties azureBlobProperties;
+
+    @Bean
+    public BlobContainerClient blobContainerClient(){
+        BlobServiceClient serviceClient = new BlobServiceClientBuilder()
+                .connectionString(azureBlobProperties.getConnectionstring())
+                .buildClient();
+        return serviceClient.getBlobContainerClient(azureBlobProperties.getContainer());
     }
 
 

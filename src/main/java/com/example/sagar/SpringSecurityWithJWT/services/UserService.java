@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 @Service
@@ -43,17 +44,10 @@ public class UserService {
         return repository.isVerified(userName);
     }
 
-    public void register(User user) {
-
-        repository.save(new User(user.getUserName(),
-                bCryptPasswordEncoder.encode(user.getPassword()),
-                user.getDeliveryAddress(),
-                user.getPhone(),
-                user.getRole(),
-                user.getAge(),
-                user.getGender(),
-                user.getLatitude(),
-                user.getLongitude()));
+    public void register(User user,String role) {
+        user.setRole(role.toUpperCase(Locale.ROOT));
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        repository.save(user);
 
     }
 

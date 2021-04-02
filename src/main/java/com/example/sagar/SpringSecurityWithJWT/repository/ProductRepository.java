@@ -10,11 +10,13 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Products, Integer> {
     @Query(value = "SELECT * from products  limit ?1 offset ?2", nativeQuery = true)
     List<Products> getPaginatedProducts(int item_count, int to);
+
 
     List<Products> findAllByProductId(Integer productId);
 
@@ -64,8 +66,8 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
     //update
     @Transactional
     @Modifying
-    @Query(value = "update products p SET p.product_name=?1,p.description=?2,p.price=?3,p.picture_path=?4,p.category=?5,p.brand=?6,p.sku=?7,p.type=?8,p.discount=?9,p.stock=?10,p.seller_id=?11 where p.product_id=?12", nativeQuery = true)
-    void updateProduct(String productName, String desc, String price, String picturePath, String category, String brand, String sku, String type, Integer discount, Integer stock, Integer sellerId, Integer productId);
+    @Query(value = "update products p SET p.product_name=?1,p.description=?2,p.price=?3,p.picture_path=?4,p.category=?5,p.brand=?6,p.sku=?7,p.type=?8,p.discount=?9,p.stock=?10,p.seller_id=?11,p.colors=?13,p.sizes=?14 where p.product_id=?12", nativeQuery = true)
+    void updateProduct(String productName, String desc, String price, String picturePath, String category, String brand, String sku, String type, Integer discount, Integer stock, Integer sellerId, Integer productId,String colors,String sizes);
 
 
     @Transactional

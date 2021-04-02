@@ -25,6 +25,7 @@ public abstract class CartMapper {
     @Mapping(target = "desc", ignore = true)
     @Mapping(target = "category", ignore = true)
     @Mapping(target = "brand", ignore = true)
+    @Mapping(target = "productId",source = "product_id")
     public abstract CartDto toDto(Carts carts);
 
 

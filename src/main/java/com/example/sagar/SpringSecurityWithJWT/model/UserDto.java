@@ -16,7 +16,6 @@ import javax.validation.constraints.Size;
 public class UserDto {
     @NotEmpty(message = "Username field can not be empty or missed")
     @Size(min = 5, max = 128, message = "Username field must have from 5 to 128 symbols")
-    @Email
     private String userName;
 
     @NotEmpty(message = "Password field cant be empty")

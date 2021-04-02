@@ -2,9 +2,7 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
 
 import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
-import com.example.sagar.SpringSecurityWithJWT.services.ColorAttrService;
 import com.example.sagar.SpringSecurityWithJWT.services.ProductService;
-import com.example.sagar.SpringSecurityWithJWT.services.SizeAttrService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -23,15 +21,12 @@ import java.util.Map;
 public class ProductController {
 
     private final ProductService productService;
-    private final ColorAttrService colorAttrService;
-    private final SizeAttrService sizeAttrService;
+
     private final RestTemplate restTemplate;
 
     @Autowired
-    ProductController(ProductService productService, ColorAttrService colorAttrService, SizeAttrService sizeAttrService, RestTemplate restTemplate) {
+    ProductController(ProductService productService,  RestTemplate restTemplate) {
         this.productService = productService;
-        this.colorAttrService = colorAttrService;
-        this.sizeAttrService = sizeAttrService;
         this.restTemplate = restTemplate;
     }
 
@@ -54,6 +49,7 @@ public class ProductController {
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
         return user.getId();
     }
+
 
     private List<ProductDto> getRecommendedProducts(int userId){
         List<ProductDto> productRespons = new ArrayList<>();
@@ -98,17 +94,6 @@ public class ProductController {
     public List<ProductDto> searchProduct(@PathVariable String query) {
         return productService.getProductsByQuery(query);
     }
-
-    @GetMapping(value = "/colors/{productId}")
-    public List<ColorAttribute> getColors(@PathVariable Integer productId) {
-        return colorAttrService.getColors(productId);
-    }
-
-    @GetMapping(value = "/sizes/{productId}")
-    public List<SizeAttribute> getSizes(@PathVariable Integer productId) {
-        return sizeAttrService.getSizes(productId);
-    }
-
 
     //reviews
     @GetMapping(value = "/reviews/{productId}")

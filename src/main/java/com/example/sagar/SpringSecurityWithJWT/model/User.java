@@ -1,6 +1,8 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +32,7 @@ public class User {
 
     @NotEmpty(message = "Password field cant be empty")
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
     @Column(name = "delivery_address")
@@ -56,6 +59,9 @@ public class User {
 
     @Column(name = "role")
     private String role;
+
+    @Transient
+    private int cartCount;
 
     //for registration
     public User(String userName, String password, String deliveryAddress, String phone, String role, String age, String gender, Double latitude, Double longitude) {

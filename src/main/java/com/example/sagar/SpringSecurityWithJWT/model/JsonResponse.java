@@ -10,9 +10,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class JsonResponse {
-
     private String status;
     private String message;
-
-
 }

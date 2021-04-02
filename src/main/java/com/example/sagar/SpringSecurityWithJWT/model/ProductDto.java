@@ -3,9 +3,13 @@ package com.example.sagar.SpringSecurityWithJWT.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductDto {
 
     private int productId;
@@ -21,5 +25,7 @@ public class ProductDto {
     private Integer stock;
     private Integer seller_id;
     private String rating;
+    private List<String> colors;
+    private List<String> sizes;
 
 }

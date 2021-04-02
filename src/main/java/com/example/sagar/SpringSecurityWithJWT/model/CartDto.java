@@ -23,8 +23,4 @@ public class CartDto {
     private String price;
 
 
-
-
-
-
 }

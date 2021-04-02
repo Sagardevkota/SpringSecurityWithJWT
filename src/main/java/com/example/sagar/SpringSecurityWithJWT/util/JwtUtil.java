@@ -1,5 +1,6 @@
 package com.example.sagar.SpringSecurityWithJWT.util;
 
+import com.example.sagar.SpringSecurityWithJWT.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-;
+
 
 @Service
 public class JwtUtil  {
@@ -45,9 +46,9 @@ public class JwtUtil  {
     }
 
     //generate token for user
-    public String generateToken(UserDetails userDetails, int id) {
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername(), id);
+        return doGenerateToken(claims, userDetails);
     }
 
 
@@ -56,11 +57,11 @@ public class JwtUtil  {
     //2. Sign the JWT using the HS512 algorithm and secret key.
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string
-    private String doGenerateToken(Map<String, Object> claims, String userName, int id) {
+    private String doGenerateToken(Map<String, Object> claims,UserDetails userDetails) {
+
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(userName)
-                .setId(String.valueOf(id))
+                .setSubject(userDetails.getUsername())
                 .setIssuer("S-MART")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))

@@ -48,6 +48,10 @@ public class UserController {
                 .role(user.getRole())
                 .build();
     }
+    @GetMapping("/userName/{userId}")
+    public JsonResponse getUsername(@PathVariable int userId){
+        return new JsonResponse("200 OK",userService.getUserName(userId));
+    }
 
     @PutMapping(value = "/{newUserName}")
     public JsonResponse updateEmail(@CurrentSecurityContext Authentication authentication, @Valid @PathVariable String newUserName)

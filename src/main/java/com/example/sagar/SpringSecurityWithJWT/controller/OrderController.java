@@ -37,16 +37,22 @@ public class OrderController {
     @PostMapping(value = "/orders")
     public JsonResponse getOrdersResponse(@RequestBody Order order) {
 
-        try {
-            Integer stock = orderService.getStock(order.getProductId());
-            Integer decreasedStock = stock - order.getQuantity();
-            orderService.changeStock(decreasedStock, order.getProductId());
-            orderService.addOrders(order);
-            return new JsonResponse("200 OK", "Added to order");
+        synchronized (this){
+            try {
+                Integer stock = orderService.getStock(order.getProductId());
+                if (stock==0)
+                    throw new Exception("Sorry the product is not in stock");
 
-        } catch (Exception e) {
-            return new JsonResponse("409 Conflict", e.getMessage());
+                Integer decreasedStock = stock - order.getQuantity();
+                orderService.changeStock(decreasedStock, order.getProductId());
+                orderService.addOrders(order);
+                return new JsonResponse("200 OK", "Added to order");
+
+            } catch (Exception e) {
+                return new JsonResponse("409 Conflict", e.getMessage());
+            }
         }
+
 
     }
 

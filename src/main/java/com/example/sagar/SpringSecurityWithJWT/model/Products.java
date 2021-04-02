@@ -1,10 +1,21 @@
 package com.example.sagar.SpringSecurityWithJWT.model;
 
-import lombok.*;
+import com.example.sagar.SpringSecurityWithJWT.configuration.JsonToMapConverter;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity(name = "products")
@@ -13,7 +24,10 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Products {
+
+public class Products implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "product_id",nullable = false,unique = true)
@@ -51,18 +65,23 @@ public class Products {
     @Column(name = "picture_path")
     private String picturePath;
 
-    @NotBlank(message = "Product Discount is mandatory")
+    @NotNull(message = "Product Discount is mandatory")
     @Column(name = "discount")
     private Integer discount;
 
-    @NotBlank(message = "Product Stock is mandatory")
+    @NotNull(message = "Product Stock is mandatory")
     @Column(name = "stock")
     private Integer stock;
 
-    @NotBlank(message = "Seller Id is mandatory")
+    @NotNull(message = "Seller Id is mandatory")
     @Column(name = "seller_id")
     private Integer seller_id;
 
 
+    @Column(name = "colors")
+    private String colors;
+
+    @Column(name = "sizes")
+    private String sizes;
 
 }

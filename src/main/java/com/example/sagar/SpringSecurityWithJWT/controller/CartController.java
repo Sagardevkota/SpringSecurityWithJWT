@@ -1,10 +1,13 @@
 package com.example.sagar.SpringSecurityWithJWT.controller;
 
+import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
 import com.example.sagar.SpringSecurityWithJWT.model.CartDto;
 import com.example.sagar.SpringSecurityWithJWT.model.Carts;
 import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
 import com.example.sagar.SpringSecurityWithJWT.services.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -19,12 +22,12 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    @GetMapping(value = "/cart/{userId}")
-    public List<CartDto> getAllProducts(@PathVariable Integer userId) {
-        return cartService.getCartList(userId);
+    @GetMapping(value = "/carts")
+    public List<CartDto> getAllProducts(@CurrentSecurityContext Authentication authentication) {
+        return cartService.getCartList(getUserId(authentication));
     }
 
-    @PostMapping(value = "/cart")
+    @PostMapping(value = "/carts")
     public JsonResponse addToCartList(@RequestBody Carts carts) {
         if (cartService.addToCartList(carts).equalsIgnoreCase("Item is already in cart"))
             return new JsonResponse("401 Conflict", "Item is already in cart");
@@ -32,17 +35,22 @@ public class CartController {
             return new JsonResponse("200 OK", "Added to cart");
     }
 
-    @DeleteMapping(value = "/cart")
+    @DeleteMapping(value = "/carts")
     public JsonResponse removeFromCartList(@RequestBody Carts carts) {
         cartService.removeFromCartList(carts);
         return new JsonResponse("200 Ok", "Item is removed from cart");
     }
 
-    @GetMapping(value = "/cart/count/{userId}")
-    public JsonResponse getBadgeCount(@PathVariable Integer userId) {
-        int count = cartService.getBadgeCount(userId);
+    @GetMapping(value = "/carts/count")
+    public JsonResponse getBadgeCount(@CurrentSecurityContext Authentication authentication) {
+        int count = cartService.getBadgeCount(getUserId(authentication));
         return new JsonResponse("200 OK", String.valueOf(count));
     }
 
+
+    private int getUserId(Authentication authentication){
+        UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
+        return user.getId();
+    }
 
 }

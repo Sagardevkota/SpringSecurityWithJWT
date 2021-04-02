@@ -3,7 +3,6 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
 import com.example.sagar.SpringSecurityWithJWT.model.Conversation;
 import com.example.sagar.SpringSecurityWithJWT.model.ConversationDto;
 import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.MessageDto;
 import com.example.sagar.SpringSecurityWithJWT.services.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,21 +21,18 @@ public class ConversationController {
         this.conversationService = conversationService;
     }
 
-    @GetMapping(value = "/conversation/{productId}")
+    @GetMapping(value = "/conversations/{productId}")
     public List<ConversationDto> getConversation(@PathVariable Integer productId) {
         return conversationService.getConversations(productId);
     }
 
 
-    @PostMapping(value = "/conversation")
+    @PostMapping(value = "/conversations")
     public JsonResponse addConversation(@RequestBody Conversation conversation) {
         conversationService.addConversation(conversation);
         return new JsonResponse("200 OK", "Conversation added");
     }
 
-    @GetMapping(value = "/conversation/seller/id/{sellerId}")
-    public List<MessageDto> getConversationList(@PathVariable Integer sellerId) {
-        return conversationService.getConversationList(sellerId);
-    }
+
 
 }
