@@ -6,10 +6,7 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
  */
 
 import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
-import com.example.sagar.SpringSecurityWithJWT.model.Feedback;
-import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.Reviews;
-import com.example.sagar.SpringSecurityWithJWT.model.User;
+import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.ProductService;
 import com.example.sagar.SpringSecurityWithJWT.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,7 @@ import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -30,6 +28,11 @@ public class UserController {
     UserController(UserService userService, ProductService productService){
         this.userService = userService;
         this.productService = productService;
+    }
+
+    @GetMapping(value = "/orders/nearby")
+    public List<ProductDto> getNearByPeopleOrders(@CurrentSecurityContext Authentication authentication) {
+        return userService.getNearbyPeopleOrders(getUserId(authentication));
     }
 
 

@@ -81,7 +81,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/seller/**")
                 .hasAnyAuthority("SELLER", "ADMIN")
                 .antMatchers("/user/**")
-                .hasAnyAuthority("USER", "ADMIN")
+                .hasAnyAuthority("USER","SELLER", "ADMIN")
                 .antMatchers("/admin/**")
                 .hasAuthority("ADMIN")
                 .antMatchers("/corona",

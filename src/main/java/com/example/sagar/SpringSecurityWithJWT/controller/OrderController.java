@@ -4,6 +4,7 @@ import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
 import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
 import com.example.sagar.SpringSecurityWithJWT.model.Order;
 import com.example.sagar.SpringSecurityWithJWT.model.OrderDto;
+import com.example.sagar.SpringSecurityWithJWT.model.ProductDto;
 import com.example.sagar.SpringSecurityWithJWT.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -28,6 +29,9 @@ public class OrderController {
         return orderService.getOrdersResponse(getUserId(authentication), status);
 
     }
+
+
+
 
     private int getUserId(Authentication authentication) {
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
