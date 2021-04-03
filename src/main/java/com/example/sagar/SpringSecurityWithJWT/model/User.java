@@ -39,7 +39,6 @@ public class User {
     private String deliveryAddress;
 
     @NotEmpty(message = "Phone must not be empty")
-    @Size(min = 9,max = 10,message = "Phone should have 10 characters")
     @Column(name = "phone")
     private String phone;
 
@@ -63,18 +62,7 @@ public class User {
     @Transient
     private int cartCount;
 
-    //for registration
-    public User(String userName, String password, String deliveryAddress, String phone, String role, String age, String gender, Double latitude, Double longitude) {
-        this.userName = userName;
-        this.password = password;
-        this.deliveryAddress = deliveryAddress;
-        this.phone = phone;
-        this.role = role;
-        this.age = age;
-        this.gender = gender;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
+
 
 
 }

@@ -72,7 +72,7 @@ public class HomeController {
 
 
     @PostMapping(value = "/register")
-    public JsonResponse register(@Valid @RequestBody User user) {
+    public JsonResponse register( @RequestBody User user) {
 
         if (userService.checkifUserExists(user.getUserName()) > 0)
             return new JsonResponse("409 Conflict", "User already exists");
