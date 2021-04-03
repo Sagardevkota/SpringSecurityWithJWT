@@ -3,6 +3,7 @@ package com.example.sagar.SpringSecurityWithJWT.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,29 +25,25 @@ public class User {
     @Column(name = "user_id", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @NotEmpty(message = "Username field can not be empty or missed")
-    @Size(min = 5, max = 128, message = "Username field must have from 5 to 128 symbols")
+    
     @Column(name = "user_name")
     private String userName;
 
-    @NotEmpty(message = "Password field cant be empty")
     @Column(name = "password")
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @Column(name = "delivery_address")
     private String deliveryAddress;
 
-    @NotEmpty(message = "Phone must not be empty")
+
     @Column(name = "phone")
     private String phone;
 
-    @NotEmpty(message = "Age cant be empty")
     @Column(name = "age")
     private String age;
 
-    @NotEmpty(message = "Gender cant be empty")
+
     @Column(name = "gender")
     private String gender;
 
