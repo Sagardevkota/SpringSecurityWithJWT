@@ -13,8 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
+import java.lang.Class;
 
+import javax.servlet.Servlet;
 import javax.validation.Valid;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @RestController
@@ -23,6 +29,9 @@ public class UserController {
 
     private final UserService userService;
     private final ProductService productService;
+
+
+
 
     @Autowired
     UserController(UserService userService, ProductService productService){

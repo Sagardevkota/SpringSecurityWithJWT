@@ -234,4 +234,19 @@ public class ProductService {
     public Products getOneProduct(Integer productId) {
         return productRepository.getOneProduct(productId);
     }
+
+    public List<ProductDto> getHotDeals(int page_number) {
+        List<ProductDto> productDtoList;
+        int item_count = 6;
+        int to = (page_number - 1) * item_count;
+        int totalItems = Math.toIntExact(productRepository.count());
+
+        //if all item has been shown
+        if (to > totalItems) return null;
+        else {
+            List<Products> products = productRepository.getProductsByDiscountDesc(item_count, to);
+            productDtoList = getProductResponse(products);
+        }
+        return productDtoList;
+    }
 }

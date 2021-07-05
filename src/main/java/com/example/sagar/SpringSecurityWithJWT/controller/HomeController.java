@@ -29,6 +29,7 @@ public class HomeController {
     private final JwtUtil jwtUtil; //for generating token
 
 
+
     @Autowired
     HomeController(AuthenticationManager authenticationManager,
                    MyUserDetailService userDetailsService,
@@ -79,7 +80,6 @@ public class HomeController {
         if (userService.checkIfUserPhoneExists(user.getPhone()) > 0)
             return new JsonResponse("409 Conflict", "Phone number is taken");
         else {
-
             userService.register(user,"USER");
             return new JsonResponse("200 Ok", "Registered successfully");
         }

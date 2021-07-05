@@ -61,6 +61,13 @@ public class ProductController {
         return productRespons;
     }
 
+
+    @GetMapping(value = "/products/hot-deals/{pageNumber}")
+    public List<ProductDto> getHotDeals(@PathVariable Integer pageNumber,@CurrentSecurityContext Authentication authentication) {
+        return productService.getHotDeals(pageNumber);
+
+    }
+
     @GetMapping(value = "/products/id/{id}")
     public Products getOneProduct(@PathVariable Integer id) {
         return productService.getOneProduct(id);

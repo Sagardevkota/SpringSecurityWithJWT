@@ -17,6 +17,8 @@ public interface ProductRepository extends JpaRepository<Products, Integer> {
     @Query(value = "SELECT * from products  limit ?1 offset ?2", nativeQuery = true)
     List<Products> getPaginatedProducts(int item_count, int to);
 
+    @Query(value = "SELECT * from products ORDER BY discount DESC  limit ?1 offset ?2", nativeQuery = true)
+    List<Products> getProductsByDiscountDesc(int item_count,int to);
 
     List<Products> findAllByProductId(Integer productId);
 

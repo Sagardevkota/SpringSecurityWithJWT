@@ -24,15 +24,15 @@ public abstract class ProductMapper {
 
 
     @AfterMapping // or @BeforeMapping  //set rating after
-    public void setRating(String rating, @MappingTarget ProductDto dto) {
-        dto.setRating(rating);
-    }
-
-    @AfterMapping // or @BeforeMapping  //set rating after
     public void setColors(String colors, @MappingTarget ProductDto dto) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         List<String> color = objectMapper.readValue(colors, new TypeReference<List<String>>() {});
         dto.setColors(color);
+    }
+
+    @AfterMapping // or @BeforeMapping  //set rating after
+    public void setRating(String rating, @MappingTarget ProductDto dto) {
+        dto.setRating(rating);
     }
 
 
