@@ -27,7 +27,7 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    private String BASE_URL = "http://52.171.61.18:8080/";
+    private String BASE_URL = "http://157.55.181.67:8080";
 
     @Autowired
     private ProductRepository productRepository;

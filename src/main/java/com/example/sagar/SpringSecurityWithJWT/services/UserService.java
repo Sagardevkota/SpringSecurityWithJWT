@@ -5,6 +5,8 @@ import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.repository.FeedbackRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -120,15 +123,9 @@ public class UserService {
 
 
         //finally get product response
-        products.forEach(products1 -> {
-            ProductDto productDto = productMapper.toDto(products1);
-            String rating = String.valueOf(productRepository.getRating(products1.getProductId()));
-            productMapper.setRating(rating, productDto);
-            productDtoList.add(productDto);
-        });
+        return getProductResponse(products);
 
 
-        return productDtoList;
     }
 
     public User getUser(int userId) {
@@ -148,6 +145,29 @@ public class UserService {
         Double max_lon = longitude + angle_radius;
 
         return repository.findNearByUser(max_lat, min_lat, max_lon, min_lon, user_id);
+    }
+
+    private List<ProductDto> getProductResponse(List<Products> products) {
+        List<ProductDto> productDtoList = new ArrayList<>();
+        products.forEach(product -> {
+            ProductDto productDto = productMapper.toDto(product); //get product dto without rating as ignore=true
+            String rating = String.valueOf(productRepository.getRating(product.getProductId()));
+            try {
+                //convert string to list of string
+                productMapper.setColors(product.getColors(),productDto);
+                productMapper.setSizes(product.getSizes(),productDto);
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+            }
+
+            if (!rating .equals("null") ) {
+                productMapper.setRating(rating, productDto); //set rating in product dto
+            } else {
+                productMapper.setRating("0", productDto);
+            }
+            productDtoList.add(productDto);
+        });
+        return productDtoList;
     }
 
 
