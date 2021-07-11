@@ -9,12 +9,10 @@ import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -22,48 +20,37 @@ public class ProductController {
 
     private final ProductService productService;
 
-    private final RestTemplate restTemplate;
 
     @Autowired
-    ProductController(ProductService productService,  RestTemplate restTemplate) {
+    ProductController(ProductService productService) {
         this.productService = productService;
-        this.restTemplate = restTemplate;
     }
-
 
 
     @GetMapping(value = "/products/{pageNumber}")
-    public List<ProductDto> getAllProducts(@PathVariable Integer pageNumber, @CurrentSecurityContext Authentication authentication) {
-//        List<ProductDto> list;
-//        list = getRecommendedProducts(getUserId(authentication));
-//        //if we have no recommendation just return what is in db
-//        if (list.size()==0)
-//        return productService.getAllProducts(pageNumber);
-//        else
-//            return list;
-
-        return productService.getAllProducts(pageNumber);
+    public List<ProductDto> getAllProducts(@PathVariable int pageNumber, @CurrentSecurityContext Authentication authentication) {
+        List<ProductDto> list;
+        list = getRecommendedProducts(getUserId(authentication));
+        //if we have no recommendation just return what is in db my adding from
+        List<ProductDto> listFromDb = productService.getAllProducts(pageNumber);
+        list.addAll(listFromDb);
+        return list.stream().distinct().collect(Collectors.toList());
 
     }
-    private int getUserId(Authentication authentication){
+
+    private int getUserId(Authentication authentication) {
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
         return user.getId();
     }
 
 
-    private List<ProductDto> getRecommendedProducts(int userId){
-        List<ProductDto> productRespons = new ArrayList<>();
-        String url = "http://localhost:9091/products/userId/{userId}";
-        Map<String, Integer> vars = new HashMap<>();
-        vars.put("userId", userId);
-        String object = restTemplate.getForObject(url,
-                String.class, vars);
-        return productRespons;
+    private List<ProductDto> getRecommendedProducts(int userId) {
+        return productService.getRecommendedProducts(userId);
     }
 
 
     @GetMapping(value = "/products/hot-deals/{pageNumber}")
-    public List<ProductDto> getHotDeals(@PathVariable Integer pageNumber,@CurrentSecurityContext Authentication authentication) {
+    public List<ProductDto> getHotDeals(@PathVariable Integer pageNumber, @CurrentSecurityContext Authentication authentication) {
         return productService.getHotDeals(pageNumber);
 
     }
@@ -112,8 +99,6 @@ public class ProductController {
     public Reviews getOneReview(@PathVariable Integer productId, @PathVariable Integer userId) {
         return productService.getOneReview(productId, userId);
     }
-
-
 
 
 }

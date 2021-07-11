@@ -3,24 +3,20 @@ package com.example.sagar.SpringSecurityWithJWT.services;
 import com.example.sagar.SpringSecurityWithJWT.mapper.ProductMapper;
 import com.example.sagar.SpringSecurityWithJWT.mapper.ReviewMapper;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
+import com.example.sagar.SpringSecurityWithJWT.recommendation.Item;
+import com.example.sagar.SpringSecurityWithJWT.recommendation.SlopeOne;
+import com.example.sagar.SpringSecurityWithJWT.recommendation.User;
 import com.example.sagar.SpringSecurityWithJWT.repository.ProductRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.ReviewRepository;
 import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Slf4j
@@ -45,10 +41,17 @@ public class ProductService {
     @Autowired
     private ReviewMapper reviewMapper;
 
+    @Autowired
+    private SlopeOne slopeOne;
+
+
     private final AzureBlobService azureBlobService;
 
+    //to keep track of products thats already shown
+
+
     @Autowired
-    ProductService(AzureBlobService azureBlobService){
+    ProductService(AzureBlobService azureBlobService) {
         this.azureBlobService = azureBlobService;
     }
 
@@ -147,20 +150,20 @@ public class ProductService {
             String rating = String.valueOf(productRepository.getRating(product.getProductId()));
             try {
                 //convert string to list of string
-                productMapper.setColors(product.getColors(),productDto);
-                productMapper.setSizes(product.getSizes(),productDto);
+                productMapper.setColors(product.getColors(), productDto);
+                productMapper.setSizes(product.getSizes(), productDto);
             } catch (JsonProcessingException e) {
                 log.error(e.getMessage());
             }
 
-            if (!rating .equals("null") ) {
+            if (!rating.equals("null")) {
                 productMapper.setRating(rating, productDto); //set rating in product dto
             } else {
                 productMapper.setRating("0", productDto);
             }
             productDtoList.add(productDto);
         });
-    return productDtoList;
+        return productDtoList;
     }
 
 
@@ -169,7 +172,7 @@ public class ProductService {
     }
 
 
-    public String saveImage(MultipartFile file,String imageName) throws IOException {
+    public String saveImage(MultipartFile file, String imageName) throws IOException {
         return azureBlobService.storeFile(imageName, file.getInputStream(), file.getSize());
 
     }
@@ -183,7 +186,7 @@ public class ProductService {
     public void updateProduct(ProductDto products) throws JsonProcessingException {
         String colors = productMapper.converJsonListToString(products.getColors());
         String sizes = productMapper.converJsonListToString(products.getSizes());
-        productRepository.updateProduct(products.getProductName(), products.getDesc(), products.getPrice(), products.getPicturePath(), products.getCategory(), products.getBrand(), products.getSku(), products.getType(), products.getDiscount(), products.getStock(), products.getSeller_id(), products.getProductId(),colors,sizes);
+        productRepository.updateProduct(products.getProductName(), products.getDesc(), products.getPrice(), products.getPicturePath(), products.getCategory(), products.getBrand(), products.getSku(), products.getType(), products.getDiscount(), products.getStock(), products.getSeller_id(), products.getProductId(), colors, sizes);
     }
 
     public void deleteProduct(Integer productId) {
@@ -196,7 +199,7 @@ public class ProductService {
         reviewsList.forEach(reviews -> {
             String userName = userRepository.getUserName(reviews.getUser_id());
             ReviewDto reviewDto = reviewMapper.toDto(reviews);
-            reviewMapper.setUserName(userName,reviewDto);
+            reviewMapper.setUserName(userName, reviewDto);
             reviewDtoList.add(reviewDto);
 
         });
@@ -248,5 +251,28 @@ public class ProductService {
             productDtoList = getProductResponse(products);
         }
         return productDtoList;
+    }
+
+    public List<ProductDto> getRecommendedProducts(int userId) {
+        //keep track of products shown so that no more than 6 items are shown at a time
+
+        List<Products> products = new ArrayList<>();
+        //first get recommendation hashmap from algo
+        Map<User, HashMap<Item, Double>> recommendation =
+                slopeOne.run(reviewRepository.findAll());
+        //then get recommendation for our user
+        HashMap<Item, Double> itemsRating = recommendation.get(new User(userId));
+        //for every items get product id and get product and add it to list
+        for (Item item : itemsRating.keySet()) {
+            //only add items whose rating>4
+            if (itemsRating.get(item) > 4) {
+                Products product = productRepository.getOneProduct(item.getProductId());
+                products.add(product);
+            }
+
+        }
+
+        return getProductResponse(products);
+
     }
 }

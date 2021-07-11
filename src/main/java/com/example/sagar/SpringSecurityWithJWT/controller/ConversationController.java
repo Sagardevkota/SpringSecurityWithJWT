@@ -21,13 +21,13 @@ public class ConversationController {
         this.conversationService = conversationService;
     }
 
-    @GetMapping(value = "/conversations/{productId}")
+    @GetMapping(value = "/user/conversations/{productId}")
     public List<ConversationDto> getConversation(@PathVariable Integer productId) {
         return conversationService.getConversations(productId);
     }
 
 
-    @PostMapping(value = "/conversations")
+    @PostMapping(value = "/user/conversations")
     public JsonResponse addConversation(@RequestBody Conversation conversation) {
         conversationService.addConversation(conversation);
         return new JsonResponse("200 OK", "Conversation added");

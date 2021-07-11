@@ -23,12 +23,15 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 @EnableSwagger2
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.example.sagar.SpringSecurityWithJWT.repository")
 public class SpringSecurityWithJwtApplication {
+
+    public final HashSet<Integer> recommendedSet = new HashSet<>();
 
     public static void main(String[] args) {
         SpringApplication.run(SpringSecurityWithJwtApplication.class, args);
