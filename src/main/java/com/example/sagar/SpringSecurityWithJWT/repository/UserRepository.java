@@ -50,7 +50,7 @@ public interface UserRepository extends JpaRepository<com.example.sagar.SpringSe
     String getRole(String userName);
 
     @Query(value="SELECT user_name from user_info where user_id=?1",nativeQuery=true)
-    String getSellerName(Integer seller_id);
+    String getSellerName(Integer user_id);
 
     @Query(value="SELECT DISTINCT user_id from user_info WHERE latitude BETWEEN ?1 AND ?2 AND longitude BETWEEN ?3 AND ?4 AND user_id!=?5 ",nativeQuery=true)
     List<Integer> findNearByUser( Double max_lat,Double min_lat,Double max_lon,Double min_lon,Integer user_id);
@@ -64,4 +64,16 @@ public interface UserRepository extends JpaRepository<com.example.sagar.SpringSe
 
     @Query(value="select phone from user_info where user_id=?1",nativeQuery=true)
     String getPhone(Integer userId);
+
+
+    @Modifying
+    @Transactional
+    @Query(value="UPDATE user_info SET user_name=?2,phone=?3,delivery_address=?4 where user_id=?1",nativeQuery=true)
+    void updateUser(int userId,String userName,String phone,String delivery);
+
+
+    @Modifying
+    @Transactional
+    @Query(value="UPDATE user_info SET password=?2 where user_id=?1",nativeQuery=true)
+    void updatePassword(int userId, String newPassword);
 }

@@ -9,6 +9,7 @@ import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.ProductService;
 import com.example.sagar.SpringSecurityWithJWT.services.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -23,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -46,20 +48,26 @@ public class UserController {
     public User getUserDetails(@CurrentSecurityContext Authentication authentication)
     {
         UserPrincipal loggedUser = (UserPrincipal) authentication.getPrincipal();
-        User user = userService.getUser(loggedUser.getId());
-        return User.builder()
-                .userName(user.getUserName())
-                .id(user.getId())
-                .deliveryAddress(user.getDeliveryAddress())
-                .gender(user.getGender())
-                .age(user.getAge())
-                .phone(user.getPhone())
-                .role(user.getRole())
-                .build();
+        return userService.getUser(loggedUser.getId());
     }
     @GetMapping("/userName/{userId}")
     public JsonResponse getUsername(@PathVariable int userId){
         return new JsonResponse("200 OK",userService.getUserName(userId));
+    }
+
+    @PutMapping(value = "/change-password")
+    public JsonResponse updatePassword(@CurrentSecurityContext Authentication authentication,
+                                        @RequestParam(value="currentPassword")  String currentPassword,
+                                       @RequestParam("newPassword")  String newPassword
+                                       )
+    {
+        String message =  userService.updatePassword(getUserId(authentication),currentPassword,newPassword);
+        if (message.equalsIgnoreCase("Updated Password"))
+            return new JsonResponse("200 OK",message);
+        else{
+            return new JsonResponse("400 BAD REQUEST",message);
+        }
+
     }
 
     @PutMapping(value = "/{newUserName}")
@@ -89,6 +97,17 @@ public class UserController {
         else{
             return new JsonResponse("200 Ok",message);
         }
+
+    }
+
+    @PutMapping(value = "/")
+    public JsonResponse updateUser(@RequestBody User user){
+
+        String message = userService.updateUser(user);
+        if (message.equalsIgnoreCase("User Updated"))
+            return new JsonResponse("200 OK",message);
+        else
+            return new JsonResponse("400 BAD REQUEST",message);
 
     }
     @PutMapping(value = "/delivery/{newDelivery}")

@@ -81,7 +81,7 @@ public class OrderService {
 
     public void addOrders(Order order) throws MessagingException, IOException, TemplateException {
         orderRepository.save(order);
-//        sendEmail(order, "ORDER CONFIRMATION");
+        sendEmail(order, "ORDER CONFIRMATION");
 
     }
 

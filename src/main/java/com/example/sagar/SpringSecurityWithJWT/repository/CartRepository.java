@@ -39,4 +39,7 @@ public interface CartRepository extends JpaRepository<Carts,Integer>
 
    @Query(value="SELECT price from carts where  product_id=?1 AND  user_id=?2",nativeQuery=true)
    String getPrice(int productId,Integer user_id);
+
+   @Query(value = "SELECT COUNT(id) from carts where user_id=?1",nativeQuery = true)
+   int getCount(Integer userId);
 }

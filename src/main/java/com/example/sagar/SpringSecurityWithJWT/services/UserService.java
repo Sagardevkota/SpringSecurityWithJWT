@@ -8,6 +8,8 @@ import com.example.sagar.SpringSecurityWithJWT.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,12 @@ public class UserService {
 
     @Autowired
     private OrderService orderService;   //this formed circular dependency so doing field injection
+
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     private final ProductRepository productRepository;
     private final FeedbackRepository feedbackRepository;
@@ -129,7 +137,9 @@ public class UserService {
     }
 
     public User getUser(int userId) {
-        return repository.getOne(userId);
+        User user = repository.getOne(userId);
+        user.setCartCount(cartService.getBadgeCount(userId));
+        return user;
     }
 
     public List<Integer> findNearByUser(Double latitude, Double longitude, Integer user_id) {
@@ -177,5 +187,49 @@ public class UserService {
 
     public void saveFeedback(Feedback feedback) {
         feedbackRepository.save(feedback);
+    }
+
+    public String updateUser(User user) {
+        User dbUser = getUser(user.getId());
+        if (dbUser==null)
+            return "User doesnt exist";
+        if (!bCryptPasswordEncoder.matches(user.getUserName(),dbUser.getPassword()))
+            return "Password is incorrect";
+        if (checkifUserExists(user.getUserName())>0)
+        return "User already exists";
+        if (checkIfUserPhoneExists(user.getPhone())>0)
+            return "Phone already taken";
+
+        //now we can update with our user's details
+        dbUser.setUserName(user.getUserName());
+        dbUser.setPhone(user.getPhone());
+        dbUser.setDeliveryAddress(user.getDeliveryAddress());
+
+        repository.updateUser(
+                dbUser.getId(),
+                dbUser.getUserName(),
+                dbUser.getPhone(),
+                dbUser.getDeliveryAddress()
+        );
+
+        return "User Updated";
+
+
+
+    }
+
+
+    public String updatePassword(int userId,String currentPassword,String newPassword) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(getUserName(userId),currentPassword));
+            repository.updatePassword(userId,bCryptPasswordEncoder.encode(newPassword));
+            return "Updated Password";
+        }
+
+        catch (Exception e){
+            return "Incorrect password";
+        }
+
+
     }
 }
