@@ -261,15 +261,18 @@ public class ProductService {
         Map<User, HashMap<Item, Double>> recommendation =
                 slopeOne.run(reviewRepository.findAll());
         //then get recommendation for our user
-        HashMap<Item, Double> itemsRating = recommendation.get(new User(userId));
+        Map<Item,Double> itemsRating =  recommendation.get(new User(userId));
         //for every items get product id and get product and add it to list
-        for (Item item : itemsRating.keySet()) {
-            //only add items whose rating>4
-            if (itemsRating.get(item) > 4) {
-                Products product = productRepository.getOneProduct(item.getProductId());
-                products.add(product);
-            }
 
+        if (itemsRating!=null){
+            for (Item item : itemsRating.keySet()) {
+                //only add items whose rating>4
+                if (itemsRating.get(item) > 4) {
+                    Products product = productRepository.getOneProduct(item.getProductId());
+                    products.add(product);
+                }
+
+            }
         }
 
         return getProductResponse(products);

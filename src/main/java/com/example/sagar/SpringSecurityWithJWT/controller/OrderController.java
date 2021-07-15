@@ -31,8 +31,6 @@ public class OrderController {
     }
 
 
-
-
     private int getUserId(Authentication authentication) {
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
         return user.getId();
