@@ -3,6 +3,7 @@ package com.example.sagar.SpringSecurityWithJWT.controller;
 import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
 import com.example.sagar.SpringSecurityWithJWT.model.*;
 import com.example.sagar.SpringSecurityWithJWT.services.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
@@ -12,14 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
+@Slf4j
 @RestController
 public class ProductController {
 
     private final ProductService productService;
 
+    //keep track of products that have been shown to avoid duplicate
+    private final List<Integer> productIdsList = new ArrayList<>();
 
     @Autowired
     ProductController(ProductService productService) {
@@ -29,12 +32,28 @@ public class ProductController {
 
     @GetMapping(value = "/products/{pageNumber}")
     public List<ProductDto> getAllProducts(@PathVariable int pageNumber, @CurrentSecurityContext Authentication authentication) {
+        if (pageNumber==1)productIdsList.clear();
+
+
         List<ProductDto> list;
         list = getRecommendedProducts(getUserId(authentication));
         //if we have no recommendation just return what is in db my adding from
         List<ProductDto> listFromDb = productService.getAllProducts(pageNumber);
         list.addAll(listFromDb);
-        return list.stream().distinct().collect(Collectors.toList());
+
+        List<ProductDto> listToRemove = new ArrayList<>();
+
+        //check if product id is already in list
+        list.forEach(productDto -> {
+            if (productIdsList.contains(productDto.getProductId()))
+                listToRemove.add(productDto);
+            else productIdsList.add(productDto.getProductId());
+        });
+
+        list.removeAll(listToRemove);
+
+
+        return list;
 
     }
 
