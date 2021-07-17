@@ -34,9 +34,7 @@ public class ProductController {
     public List<ProductDto> getAllProducts(@PathVariable int pageNumber, @CurrentSecurityContext Authentication authentication) {
         if (pageNumber==1)productIdsList.clear();
 
-
-        List<ProductDto> list = new ArrayList<>();
-        list = getRecommendedProducts(getUserId(authentication));
+        List<ProductDto> list = getRecommendedProducts(getUserId(authentication));
         //if we have no recommendation just return what is in db my adding from
         List<ProductDto> listFromDb = productService.getAllProducts(pageNumber);
         list.addAll(listFromDb);
@@ -65,7 +63,7 @@ public class ProductController {
     private List<ProductDto> getRecommendedProducts(int userId) {
         return productService.getRecommendedProducts(userId);
     }
-    
+
     @GetMapping(value = "/products/hot-deals/{pageNumber}")
     public List<ProductDto> getHotDeals(@PathVariable Integer pageNumber, @CurrentSecurityContext Authentication authentication) {
         return productService.getHotDeals(pageNumber);

@@ -15,8 +15,8 @@ public class OrderDto {
     private Integer productId;
     private String userName;
     private String phone;
-    private String color;
-    private Float size;
+    private String productColor;
+    private Float productSize;
     private Integer price;
     private Integer quantity;
     private String orderedDate;
@@ -28,8 +28,6 @@ public class OrderDto {
     private String productName;
     private Integer discount;
     private String picturePath;
-
-
-
+    
 
 }

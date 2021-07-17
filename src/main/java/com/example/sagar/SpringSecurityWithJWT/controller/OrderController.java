@@ -1,23 +1,29 @@
 package com.example.sagar.SpringSecurityWithJWT.controller;
 
 import com.example.sagar.SpringSecurityWithJWT.configuration.UserPrincipal;
-import com.example.sagar.SpringSecurityWithJWT.model.JsonResponse;
-import com.example.sagar.SpringSecurityWithJWT.model.Order;
-import com.example.sagar.SpringSecurityWithJWT.model.OrderDto;
-import com.example.sagar.SpringSecurityWithJWT.model.ProductDto;
+import com.example.sagar.SpringSecurityWithJWT.model.*;
+import com.example.sagar.SpringSecurityWithJWT.services.EmailService;
 import com.example.sagar.SpringSecurityWithJWT.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 
 @RestController
 public class OrderController {
 
     private final OrderService orderService;
+
+    private final Queue<Order> msgQueue = new LinkedList<>();
+
+    @Autowired
+    private EmailService emailService;
+
 
     @Autowired
     OrderController(OrderService orderService) {
@@ -30,10 +36,23 @@ public class OrderController {
 
     }
 
-
     private int getUserId(Authentication authentication) {
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal(); //cast principal object to our user principal
         return user.getId();
+    }
+
+    @PostMapping(value = "/multiple-orders")
+    public JsonResponse addMultipleOrders(@RequestBody OrderWrapper orderWrapper){
+        msgQueue.clear();
+        orderWrapper.getOrders().forEach(this::getOrdersResponse);
+        msgQueue.forEach(order -> {
+            try {
+                emailService.sendEmail(order,"ORDER_CONFIRMATION");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        return new JsonResponse("200 OK","Added orders");
     }
 
     @PostMapping(value = "/orders")
@@ -48,6 +67,8 @@ public class OrderController {
                 Integer decreasedStock = stock - order.getQuantity();
                 orderService.changeStock(decreasedStock, order.getProductId());
                 orderService.addOrders(order);
+                msgQueue.add(order);
+
                 return new JsonResponse("200 OK", "Added to order");
 
             } catch (Exception e) {

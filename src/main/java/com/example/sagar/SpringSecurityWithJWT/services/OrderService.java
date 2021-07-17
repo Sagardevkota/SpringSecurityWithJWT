@@ -20,10 +20,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class OrderService {
@@ -40,13 +37,12 @@ public class OrderService {
     private ProductService productService;
 
     @Autowired
-    private JavaMailSender sender;
-
-    @Autowired
     private OrderMapper orderMapper;
 
     @Autowired
-    private Configuration config;
+    private EmailService emailService;
+
+
 
     public List<OrderDto> getOrdersResponse(Integer userId, String status) {
         List<Order> orders = getOrders(userId, status);
@@ -79,10 +75,8 @@ public class OrderService {
     }
 
 
-    public void addOrders(Order order) throws MessagingException, IOException, TemplateException {
+    public void addOrders(Order order) {
         orderRepository.save(order);
-        sendEmail(order, "ORDER CONFIRMATION");
-
     }
 
     public List<OrderDto> getOrdersForSellers(Integer seller_id, String status) {
@@ -115,9 +109,10 @@ public class OrderService {
         return orderRepository.getOrdersForSeller(seller_id, status).size();
     }
 
-    public void changeStatus(Integer orderId, String status) throws MessagingException, IOException, TemplateException {
+    public void changeStatus(Integer orderId, String status) throws MessagingException, TemplateException, IOException {
         orderRepository.changeStatus(orderId, status);
-        sendEmail(orderRepository.getOne(orderId), status.toUpperCase());
+        Order order = orderRepository.getOne(orderId);
+        emailService.sendEmail(order,status.toUpperCase(Locale.ROOT) );
     }
 
     public void changeOrderedDate(Integer orderId, String deliveredDate) {
@@ -133,39 +128,6 @@ public class OrderService {
     }
 
 
-    public void sendEmail(Order order, String mailType) throws MessagingException, IOException, TemplateException {
 
-        String userName = userService.getUserName(order.getUserId());
-        String productName = productService.getProductName(order.getProductId());
-
-        MimeMessage message = sender.createMimeMessage();
-        Map<String, Object> model = new HashMap<>();
-        model.put("userName", userName);
-        model.put("productName", productName);
-        model.put("qty", order.getQuantity());
-        model.put("color", order.getProductColor());
-        model.put("size", order.getProductSize());
-        model.put("address", order.getDeliveryAddress());
-        model.put("price", order.getPrice());
-        model.put("status", order.getStatus());
-
-
-        // set mediaType
-        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
-        // add attachment
-//            helper.addAttachment("logo.png", new ClassPathResource("robot.png"));
-
-        Template t = config.getTemplate("email-template.ftl");
-        String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
-
-        helper.setTo(userName);
-        helper.setText(html, true);
-        helper.setSubject(mailType);
-        helper.setFrom("noreply@SMart.com");
-        sender.send(message);
-
-
-    }
 
 }

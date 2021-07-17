@@ -11,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -25,7 +27,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.Executor;
 
+@EnableAsync
 @EnableSwagger2
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.example.sagar.SpringSecurityWithJWT.repository")
@@ -101,6 +105,18 @@ public class SpringSecurityWithJwtApplication {
                 .connectionString(azureBlobProperties.getConnectionstring())
                 .buildClient();
         return serviceClient.getBlobContainerClient(azureBlobProperties.getContainer());
+    }
+
+    @Bean(name="processExecutor")
+    public Executor taskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(500);
+        //other proeprties to be set here
+        executor.setThreadNamePrefix("ASYNC-");
+        executor.initialize();
+        return executor;
     }
 
 

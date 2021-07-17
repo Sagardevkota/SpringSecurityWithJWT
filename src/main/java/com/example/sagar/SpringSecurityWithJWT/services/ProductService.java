@@ -23,8 +23,6 @@ import java.util.*;
 @Service
 public class ProductService {
 
-    private String BASE_URL = "http://157.55.181.67:8080";
-
     @Autowired
     private ProductRepository productRepository;
 
