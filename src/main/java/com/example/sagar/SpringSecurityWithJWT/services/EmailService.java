@@ -10,6 +10,7 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -26,15 +27,19 @@ import java.util.Map;
 @Service
 public class EmailService {
 
+    @Lazy
     @Autowired
     private JavaMailSender sender;
 
+    @Lazy
     @Autowired
     private UserService userService;
 
+    @Lazy
     @Autowired
     private ProductService productService;
 
+    @Lazy
     @Autowired
     private Configuration config;
 
